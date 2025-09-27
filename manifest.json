@@ -1,0 +1,25 @@
+{
+  "manifest_version": 3,
+  "name": "ChromeMind — Built-in AI Booster",
+  "description": "Summarize, translate, proofread, rewrite and chat using Chrome's Built-in AI APIs directly in your browser.",
+  "version": "1.0.0",
+  "action": { "default_title": "ChromeMind" },
+  "permissions": ["activeTab", "scripting", "storage", "sidePanel"],
+  "host_permissions": ["<all_urls>"],
+  "icons": {
+    "16": "assets/icon16.svg",
+    "48": "assets/icon48.svg",
+    "128": "assets/icon128.svg"
+  },
+  "background": { "service_worker": "service_worker.js", "type": "module" },
+  "side_panel": { "default_path": "sidepanel.html" },
+  "content_scripts": [{
+    "matches": ["<all_urls>"],
+    "js": ["content.js"],
+    "run_at": "document_end"
+  }],
+  "web_accessible_resources": [{
+    "resources": ["styles.css"],
+    "matches": ["<all_urls>"]
+  }]
+}

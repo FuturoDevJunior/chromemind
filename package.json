@@ -1,0 +1,101 @@
+{
+  "name": "chromemind",
+  "version": "1.0.0",
+  "description": "Built-in AI Booster - Summarize, translate, proofread, rewrite and chat using Chrome's Built-in AI APIs directly in your browser.",
+  "main": "service_worker.js",
+  "type": "module",
+  "scripts": {
+    "build": "echo 'Extension built successfully'",
+    "test": "node -c service_worker.js && node -c content.js && node -c sidepanel.js",
+    "lint": "echo 'No linter configured - extension uses vanilla JS'",
+    "validate": "node scripts/validate-manifest.js"
+  },
+  "keywords": [
+    "chrome-extension",
+    "ai",
+    "gemini-nano",
+    "built-in-ai",
+    "summarizer",
+    "translator",
+    "proofreader",
+    "writer",
+    "prompt-api",
+    "hackathon",
+    "google-chrome",
+    "devpost"
+  ],
+  "author": {
+    "name": "DevFerreiraG",
+    "email": "futurodevjunior@gmail.com",
+    "url": "https://github.com/futurodevjunior"
+  },
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/futurodevjunior/chromemind.git"
+  },
+  "bugs": {
+    "url": "https://github.com/futurodevjunior/chromemind/issues"
+  },
+  "homepage": "https://github.com/futurodevjunior/chromemind#readme",
+  "engines": {
+    "node": ">=16.0.0"
+  },
+  "devDependencies": {},
+  "dependencies": {},
+  "files": [
+    "manifest.json",
+    "service_worker.js",
+    "sidepanel.html",
+    "sidepanel.js", 
+    "content.js",
+    "styles.css",
+    "lib/",
+    "hybrid/",
+    "assets/",
+    "README.md",
+    "LICENSE",
+    "TESTING.md"
+  ],
+  "chromeExtension": {
+    "manifestVersion": 3,
+    "apis": [
+      "chrome.sidePanel",
+      "chrome.tabs",
+      "chrome.runtime",
+      "chrome.scripting"
+    ],
+    "builtInAI": [
+      "Summarizer API",
+      "Translator API", 
+      "Language Detector API",
+      "Prompt API (Extensions)",
+      "Proofreader API",
+      "Writer API",
+      "Rewriter API"
+    ],
+    "permissions": [
+      "activeTab",
+      "scripting", 
+      "storage",
+      "sidePanel"
+    ],
+    "hostPermissions": [
+      "<all_urls>"
+    ]
+  },
+  "hackathon": {
+    "name": "Google Chrome Built-in AI Challenge 2025",
+    "category": "Chrome Extension",
+    "tracks": [
+      "Most Helpful",
+      "Best Hybrid AI Application",
+      "Best Multimodal AI Application"
+    ],
+    "submissions": {
+      "devpost": "https://devpost.com/software/chromemind",
+      "demo": "https://www.youtube.com/watch?v=YOUR_VIDEO_ID",
+      "github": "https://github.com/futurodevjunior/chromemind"
+    }
+  }
+}

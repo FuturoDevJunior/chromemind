@@ -1,0 +1,43 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <title>ChromeMind</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header>
+    <h1>🧠 ChromeMind</h1>
+    <div class="toggles">
+      <label><input type="checkbox" id="hybridToggle"> Hybrid (cloud fallback)</label>
+      <label><input type="checkbox" id="streamToggle" checked> Stream</label>
+    </div>
+  </header>
+
+  <section class="actions">
+    <button id="btnSummarize">📄 Resumo da página</button>
+    <button id="btnTranslate">🌐 Traduzir seleção → PT-BR</button>
+    <button id="btnProofread">✏️ Revisar seleção</button>
+    <button id="btnRewrite">🔄 Reescrever (mais claro)</button>
+  </section>
+
+  <section class="prompt">
+    <textarea id="promptInput" placeholder="Ask the on-device AI assistant..."></textarea>
+    <div class="row">
+      <select id="promptMode">
+        <option value="creative">🎨 Criativo</option>
+        <option value="precise">🎯 Preciso</option>
+      </select>
+      <button id="btnPrompt">▶️ Enviar</button>
+    </div>
+  </section>
+
+  <section id="output" class="output"></section>
+
+  <footer>
+    <small>🔒 On-device first. Dados não saem do dispositivo (exceto se Hybrid estiver ativo).</small>
+  </footer>
+
+  <script type="module" src="sidepanel.js"></script>
+</body>
+</html>
