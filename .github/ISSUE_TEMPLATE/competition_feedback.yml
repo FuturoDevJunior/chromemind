@@ -1,0 +1,277 @@
+name: 🏆 Competition Feedback
+description: Feedback specifically for the Google Chrome Built-in AI Challenge
+title: "[Competition] "
+labels: ["competition", "feedback", "google-chrome-challenge"]
+assignees: []
+
+body:
+  - type: markdown
+    attributes:
+      value: |
+        ## 🏆 Google Chrome Built-in AI Challenge Feedback
+        
+        This template is specifically for feedback related to ChromeMind's submission to the **Google Chrome Built-in AI Challenge 2025**.
+        
+        Whether you're a judge, participant, or community member, your feedback helps improve this competition entry!
+
+  - type: dropdown
+    id: feedback-type
+    attributes:
+      label: 🎯 Feedback Type
+      description: What type of feedback are you providing?
+      options:
+        - Judge evaluation/scoring feedback
+        - Competitor/peer review
+        - Community member feedback
+        - Technical expert review
+        - Accessibility audit feedback
+        - Security review feedback
+        - General competition improvement
+    validations:
+      required: true
+
+  - type: dropdown
+    id: competition-category
+    attributes:
+      label: 🏷️ Competition Category Focus
+      description: Which competition categories does this feedback address?
+      multiple: true
+      options:
+        - Most Helpful Chrome Extension
+        - Best Hybrid AI Application
+        - Best Multimodal AI Application
+        - General competition readiness
+        - Technical implementation quality
+        - User experience excellence
+    validations:
+      required: true
+
+  - type: textarea
+    id: overall-impression
+    attributes:
+      label: ⭐ Overall Impression
+      description: What's your overall impression of ChromeMind as a competition entry?
+      placeholder: |
+        Please share your overall thoughts:
+        - First impressions when trying the extension
+        - How well does it demonstrate Chrome's Built-in AI capabilities?
+        - Does it feel competition-ready?
+        - What stands out as particularly impressive?
+    validations:
+      required: true
+
+  - type: textarea
+    id: strengths
+    attributes:
+      label: ✅ Strengths
+      description: What are the strongest aspects of this submission?
+      placeholder: |
+        Highlight the positive aspects:
+        - Technical excellence
+        - User experience quality
+        - AI integration effectiveness
+        - Innovation and creativity
+        - Documentation quality
+        - Code quality and architecture
+    validations:
+      required: true
+
+  - type: textarea
+    id: improvement-areas
+    attributes:
+      label: 🔧 Areas for Improvement
+      description: What aspects could be enhanced for better competition performance?
+      placeholder: |
+        Constructive feedback on:
+        - Technical implementations that could be improved
+        - User experience enhancements
+        - AI feature optimization
+        - Documentation gaps
+        - Performance optimizations
+        - Accessibility improvements
+    validations:
+      required: true
+
+  - type: textarea
+    id: ai-api-evaluation
+    attributes:
+      label: 🤖 Built-in AI API Usage Evaluation
+      description: How effectively does ChromeMind utilize Chrome's Built-in AI APIs?
+      placeholder: |
+        Evaluate AI API integration:
+        - Which APIs are used most effectively?
+        - Are there missed opportunities for AI integration?
+        - How innovative is the AI usage?
+        - Does it showcase the full potential of Built-in AI?
+        - Any suggestions for better AI feature implementation?
+
+  - type: checkboxes
+    id: feature-evaluation
+    attributes:
+      label: 📋 Feature Evaluation
+      description: Rate the current features (check all that work well)
+      options:
+        - label: 📄 Page Summarization (Summarizer API)
+        - label: 🌐 Text Translation (Translator API)
+        - label: ✏️ Grammar & Proofreading (Proofreader API)
+        - label: 🔄 Text Rewriting (Writer/Rewriter API)
+        - label: 🧠 AI Chat (Prompt API)
+        - label: 🎨 User Interface & Design
+        - label: 🔒 Privacy & Security
+        - label: ⚡ Performance & Speed
+        - label: ♿ Accessibility
+        - label: 📱 Cross-platform compatibility
+
+  - type: textarea
+    id: judge-perspective
+    attributes:
+      label: 👩‍⚽ Judge's Perspective
+      description: If you were judging this for the competition, what would you focus on?
+      placeholder: |
+        From a competition judging standpoint:
+        - What criteria would you evaluate this against?
+        - How does it compare to other potential submissions?
+        - What would make this submission stand out?
+        - Any specific improvements that would boost scoring?
+        - Does it effectively target the competition categories?
+
+  - type: textarea
+    id: user-experience
+    attributes:
+      label: 👤 User Experience Feedback
+      description: How is the actual user experience when using ChromeMind?
+      placeholder: |
+        User experience details:
+        - Ease of installation and setup
+        - Intuitiveness of the interface
+        - Clarity of features and functionality
+        - Responsiveness and performance
+        - Error handling and edge cases
+        - Overall satisfaction with the tool
+
+  - type: textarea
+    id: technical-assessment
+    attributes:
+      label: ⚙️ Technical Assessment
+      description: Technical evaluation of the implementation
+      placeholder: |
+        Technical aspects:
+        - Code quality and architecture
+        - Chrome extension best practices
+        - Manifest V3 compliance
+        - Security implementation
+        - Performance optimization
+        - Error handling robustness
+        - Testing coverage adequacy
+
+  - type: textarea
+    id: innovation-score
+    attributes:
+      label: 💡 Innovation & Creativity
+      description: How innovative and creative is this submission?
+      placeholder: |
+        Innovation evaluation:
+        - Unique approaches to AI integration
+        - Creative use of Built-in AI APIs
+        - Novel features or capabilities
+        - Problem-solving creativity
+        - Technical innovation
+        - User experience innovation
+
+  - type: dropdown
+    id: competition-readiness
+    attributes:
+      label: 🎯 Competition Readiness Level
+      description: How ready is this submission for the competition?
+      options:
+        - "🟢 Fully ready - excellent submission"
+        - "🟡 Nearly ready - minor improvements needed"
+        - "🟠 Mostly ready - some significant improvements needed"
+        - "🔴 Needs work - major improvements required"
+        - "❓ Uncertain - need more evaluation time"
+    validations:
+      required: true
+
+  - type: textarea
+    id: specific-recommendations
+    attributes:
+      label: 🎯 Specific Recommendations
+      description: Concrete, actionable recommendations for improvement
+      placeholder: |
+        Provide specific, actionable recommendations:
+        - Priority 1: Critical improvements for competition success
+        - Priority 2: Important enhancements that would boost scoring
+        - Priority 3: Nice-to-have improvements for polish
+        
+        Be as specific as possible with implementation suggestions.
+
+  - type: textarea
+    id: marketing-presentation
+    attributes:
+      label: 📢 Marketing & Presentation
+      description: Feedback on how ChromeMind presents itself for the competition
+      placeholder: |
+        Presentation aspects:
+        - README and documentation quality
+        - Demo video potential
+        - Marketing copy effectiveness
+        - Visual design and branding
+        - Competition category alignment
+        - Unique value proposition clarity
+
+  - type: checkboxes
+    id: testing-checklist
+    attributes:
+      label: ✅ Testing Checklist
+      description: Which aspects have you tested? (Check all that apply)
+      options:
+        - label: Installation and setup process
+        - label: All AI features functionality
+        - label: Error handling and edge cases
+        - label: Performance under load
+        - label: Cross-browser compatibility
+        - label: Accessibility features
+        - label: Security aspects
+        - label: Documentation accuracy
+
+  - type: textarea
+    id: additional-suggestions
+    attributes:
+      label: 💭 Additional Suggestions
+      description: Any other suggestions or ideas for this competition entry?
+      placeholder: |
+        Additional thoughts:
+        - Feature additions that would be impressive
+        - Technical improvements for better scoring
+        - Presentation improvements for judges
+        - Community engagement strategies
+        - Post-competition development ideas
+
+  - type: dropdown
+    id: reviewer-background
+    attributes:
+      label: 👨‍💼 Reviewer Background
+      description: What's your background? (helps us understand context)
+      options:
+        - Competition judge/evaluator
+        - Fellow competition participant
+        - Chrome extension developer
+        - AI/ML professional
+        - UX/UI designer
+        - Security professional
+        - Accessibility expert
+        - General developer
+        - End user/consumer
+        - Other
+
+  - type: checkboxes
+    id: follow-up
+    attributes:
+      label: 🤝 Follow-up
+      description: How would you like to stay involved?
+      options:
+        - label: I'd like to be notified of updates to this submission
+        - label: I'm available for additional feedback/testing
+        - label: I'd like to contribute to improvements
+        - label: I'm interested in collaboration opportunities
+        - label: I'd like to mentor/advise on competition strategy

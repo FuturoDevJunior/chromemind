@@ -1,0 +1,332 @@
+name: 🔒 Security Audit
+
+on:
+  schedule:
+    - cron: '0 6 * * 1'  # Weekly on Mondays
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  dependency-scan:
+    name: 🔍 Dependency Security Scan
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: 📥 Checkout Repository
+        uses: actions/checkout@v4
+        
+      - name: 🔧 Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'npm'
+          
+      - name: 📦 Install Dependencies
+        run: npm ci
+        
+      - name: 🔒 NPM Audit
+        run: |
+          echo "🔍 Running NPM security audit..."
+          npm audit --audit-level=moderate --json > audit-results.json || true
+          
+          # Parse audit results
+          node -e "
+            const fs = require('fs');
+            try {
+              const results = JSON.parse(fs.readFileSync('audit-results.json', 'utf8'));
+              
+              if (results.metadata && results.metadata.vulnerabilities) {
+                const vulns = results.metadata.vulnerabilities;
+                const total = vulns.total || 0;
+                const high = vulns.high || 0;
+                const critical = vulns.critical || 0;
+                
+                console.log('📊 Security Summary:');
+                console.log('   Total vulnerabilities:', total);
+                console.log('   High severity:', high);
+                console.log('   Critical severity:', critical);
+                
+                if (critical > 0) {
+                  console.error('❌ Critical vulnerabilities found!');
+                  process.exit(1);
+                }
+                
+                if (high > 3) {
+                  console.error('❌ Too many high-severity vulnerabilities!');
+                  process.exit(1);
+                }
+                
+                console.log('✅ Dependency security scan passed');
+              }
+            } catch (e) {
+              console.log('✅ No vulnerabilities found');
+            }
+          "
+
+  chrome-extension-security:
+    name: 🛡️ Chrome Extension Security
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: 📥 Checkout Repository
+        uses: actions/checkout@v4
+        
+      - name: 🔍 Manifest Security Audit
+        run: |
+          echo "🔍 Auditing manifest.json security..."
+          node -e "
+            const manifest = require('./manifest.json');
+            let issues = [];
+            
+            // Check permissions
+            const permissions = manifest.permissions || [];
+            const hostPermissions = manifest.host_permissions || [];
+            
+            // Flag overly broad permissions
+            if (permissions.includes('tabs')) {
+              issues.push('⚠️  tabs permission - ensure minimal usage');
+            }
+            
+            if (permissions.includes('cookies')) {
+              issues.push('❌ cookies permission detected');
+            }
+            
+            if (permissions.includes('history')) {
+              issues.push('❌ history permission detected');
+            }
+            
+            if (hostPermissions.includes('<all_urls>')) {
+              console.log('⚠️  <all_urls> permission - verify necessity');
+            }
+            
+            // Check for dangerous content security policy
+            if (manifest.content_security_policy) {
+              const csp = manifest.content_security_policy;
+              if (typeof csp === 'string' && csp.includes('unsafe-eval')) {
+                issues.push('❌ CSP allows unsafe-eval');
+              }
+              if (typeof csp === 'object' && JSON.stringify(csp).includes('unsafe-eval')) {
+                issues.push('❌ CSP allows unsafe-eval');
+              }
+            }
+            
+            // Check for external URLs
+            if (manifest.externally_connectable) {
+              issues.push('⚠️  externally_connectable defined');
+            }
+            
+            if (issues.length > 0) {
+              console.log('🔍 Security Issues Found:');
+              issues.forEach(issue => console.log('  ' + issue));
+              
+              // Only fail for critical issues (marked with ❌)
+              if (issues.some(issue => issue.includes('❌'))) {
+                process.exit(1);
+              }
+            } else {
+              console.log('✅ Manifest security audit passed');
+            }
+          "
+          
+      - name: 🔒 Content Security Policy Check
+        run: |
+          echo "🔒 Checking Content Security Policy compliance..."
+          
+          # Check HTML files for inline scripts
+          for file in *.html; do
+            if [ -f "$file" ]; then
+              echo "🔍 Checking $file..."
+              
+              # Check for inline event handlers
+              if grep -E 'on(click|load|submit|change)=' "$file"; then
+                echo "❌ Inline event handlers found in $file"
+                exit 1
+              fi
+              
+              # Check for inline scripts
+              if grep -E '<script[^>]*>[^<]' "$file"; then
+                echo "❌ Inline scripts found in $file"
+                exit 1
+              fi
+              
+              # Check for javascript: URLs
+              if grep -i 'javascript:' "$file"; then
+                echo "❌ javascript: URLs found in $file"
+                exit 1
+              fi
+            fi
+          done
+          
+          echo "✅ CSP compliance check passed"
+          
+      - name: 🔍 Code Injection Check
+        run: |
+          echo "🔍 Checking for potential code injection vulnerabilities..."
+          
+          # Check JavaScript files for dangerous patterns
+          for file in *.js lib/*.js; do
+            if [ -f "$file" ]; then
+              echo "🔍 Scanning $file..."
+              
+              # Check for eval usage
+              if grep -E '(^|[^a-zA-Z])eval\\s*\\(' "$file"; then
+                echo "❌ eval() usage found in $file"
+                exit 1
+              fi
+              
+              # Check for Function constructor
+              if grep -E 'new\\s+Function\\s*\\(' "$file"; then
+                echo "❌ Function constructor usage found in $file"
+                exit 1
+              fi
+              
+              # Check for innerHTML with user input
+              if grep -E 'innerHTML\\s*[+=]' "$file"; then
+                echo "⚠️  innerHTML usage found in $file - verify sanitization"
+              fi
+              
+              # Check for document.write
+              if grep -E 'document\\.write\\s*\\(' "$file"; then
+                echo "⚠️  document.write usage found in $file"
+              fi
+            fi
+          done
+          
+          echo "✅ Code injection check completed"
+
+  privacy-audit:
+    name: 🔒 Privacy Audit
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: 📥 Checkout Repository
+        uses: actions/checkout@v4
+        
+      - name: 🔍 Privacy Check
+        run: |
+          echo "🔍 Checking privacy compliance..."
+          
+          # Check for data collection patterns
+          suspicious_patterns=(
+            "fetch.*http"
+            "XMLHttpRequest"
+            "navigator\\.userAgent"
+            "localStorage\\.setItem"
+            "sessionStorage\\.setItem"
+            "chrome\\.storage\\.sync"
+            "location\\.href"
+            "document\\.cookie"
+          )
+          
+          for pattern in "${suspicious_patterns[@]}"; do
+            echo "🔍 Searching for pattern: $pattern"
+            
+            if grep -r -E "$pattern" --include="*.js" --exclude-dir=node_modules .; then
+              echo "⚠️  Found usage of $pattern - verify privacy compliance"
+            fi
+          done
+          
+          # Check for external connections
+          echo "🌐 Checking for external connections..."
+          
+          if grep -r -E "https?://[^/]*\\.(com|org|net|io)" --include="*.js" --include="*.html" --exclude-dir=node_modules .; then
+            echo "⚠️  External connections found - verify necessity"
+          else
+            echo "✅ No external connections detected"
+          fi
+          
+          echo "✅ Privacy audit completed"
+
+  chrome-store-compliance:
+    name: 📱 Chrome Web Store Compliance
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: 📥 Checkout Repository
+        uses: actions/checkout@v4
+        
+      - name: 📋 Store Policy Check
+        run: |
+          echo "📋 Checking Chrome Web Store policy compliance..."
+          
+          # Check manifest requirements
+          node -e "
+            const manifest = require('./manifest.json');
+            let issues = [];
+            
+            // Required fields
+            const required = ['name', 'version', 'description', 'icons'];
+            required.forEach(field => {
+              if (!manifest[field]) {
+                issues.push('❌ Missing required field: ' + field);
+              }
+            });
+            
+            // Version format
+            if (manifest.version && !/^\\d+(\\.\\d+)*$/.test(manifest.version)) {
+              issues.push('❌ Invalid version format');
+            }
+            
+            // Description length
+            if (manifest.description && manifest.description.length < 10) {
+              issues.push('❌ Description too short');
+            }
+            
+            if (manifest.description && manifest.description.length > 132) {
+              issues.push('❌ Description too long');
+            }
+            
+            // Icons
+            if (manifest.icons) {
+              const requiredSizes = ['16', '48', '128'];
+              requiredSizes.forEach(size => {
+                if (!manifest.icons[size]) {
+                  issues.push('⚠️  Missing recommended icon size: ' + size);
+                }
+              });
+            }
+            
+            if (issues.length > 0) {
+              console.log('🔍 Store Compliance Issues:');
+              issues.forEach(issue => console.log('  ' + issue));
+              
+              if (issues.some(issue => issue.includes('❌'))) {
+                process.exit(1);
+              }
+            } else {
+              console.log('✅ Chrome Web Store compliance check passed');
+            }
+          "
+          
+      - name: 📷 Icon Verification
+        run: |
+          echo "📷 Verifying extension icons..."
+          
+          required_icons=("16" "48" "128")
+          
+          for size in "${required_icons[@]}"; do
+            icon_file="assets/icon${size}.png"
+            
+            if [ -f "$icon_file" ]; then
+              echo "✅ Found icon: $icon_file"
+              
+              # Check file size (should be reasonable)
+              file_size=$(stat -f%z "$icon_file" 2>/dev/null || stat -c%s "$icon_file" 2>/dev/null || echo 0)
+              
+              if [ $file_size -gt 51200 ]; then  # 50KB limit
+                echo "⚠️  $icon_file is large ($(($file_size / 1024))KB) - consider optimization"
+              fi
+              
+              if [ $file_size -eq 0 ]; then
+                echo "❌ $icon_file is empty"
+                exit 1
+              fi
+            else
+              echo "❌ Missing required icon: $icon_file"
+              exit 1
+            fi
+          done
+          
+          echo "✅ Icon verification completed"

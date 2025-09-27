@@ -5,10 +5,23 @@
   "main": "service_worker.js",
   "type": "module",
   "scripts": {
-    "build": "echo 'Extension built successfully'",
-    "test": "node -c service_worker.js && node -c content.js && node -c sidepanel.js",
-    "lint": "echo 'No linter configured - extension uses vanilla JS'",
-    "validate": "node scripts/validate-manifest.js"
+    "build": "npm run validate && npm test && echo '✅ ChromeMind extension built successfully'",
+    "test": "npm run test:syntax && npm run test:manifest && npm run test:structure",
+    "test:syntax": "node -c service_worker.js && node -c content.js && node -c sidepanel.js && echo '✅ JavaScript syntax validation passed'",
+    "test:manifest": "node scripts/validate-manifest.js",
+    "test:structure": "node -e \"const fs=require('fs'); const required=['manifest.json','service_worker.js','sidepanel.html','sidepanel.js','content.js','styles.css']; const missing=required.filter(f=>!fs.existsSync(f)); if(missing.length) {console.error('❌ Missing files:', missing); process.exit(1);} console.log('✅ File structure validation passed');\"",
+    "lint": "echo '🧹 Code style check (vanilla JS - no linter configured)'",
+    "validate": "npm run test:manifest && echo '✅ Manifest validation completed'",
+    "package": "npm run build && npm run package:create",
+    "package:create": "node -e \"const fs=require('fs'); const pkg=require('./package.json'); const version=require('./manifest.json').version; const archiver=require('archiver'); const output=fs.createWriteStream('chromemind-v'+version+'.zip'); const archive=archiver('zip'); archive.pipe(output); ['manifest.json','service_worker.js','sidepanel.html','sidepanel.js','content.js','styles.css','lib','hybrid','assets','README.md','LICENSE','TESTING.md'].forEach(f=>{if(fs.existsSync(f)){if(fs.statSync(f).isDirectory()){archive.directory(f,f);}else{archive.file(f,{name:f});}}});archive.finalize();console.log('📦 Extension packaged as chromemind-v'+version+'.zip');\"",
+    "dev": "echo '🔧 Development mode - Load extension in Chrome via chrome://extensions/'",
+    "clean": "rm -rf node_modules/.cache && rm -f chromemind-v*.zip && echo '🧹 Cleaned build artifacts'",
+    "security-audit": "npm audit --audit-level=moderate",
+    "size-check": "node -e \"const fs=require('fs'); let total=0; ['manifest.json','service_worker.js','sidepanel.html','sidepanel.js','content.js','styles.css'].forEach(f=>{if(fs.existsSync(f)){const size=fs.statSync(f).size; console.log(f+':', Math.round(size/1024)+'KB'); total+=size;}}); console.log('Total:', Math.round(total/1024)+'KB');\"",
+    "competition:validate": "npm run build && npm run security-audit && npm run size-check && echo '🏆 Competition validation completed'",
+    "competition:package": "npm run competition:validate && npm run package && echo '🏆 Competition package ready'",
+    "docs:serve": "echo '📚 Documentation available at: https://github.com/futurodevjunior/chromemind#readme'",
+    "ci": "npm run build && npm run security-audit"
   },
   "keywords": [
     "chrome-extension",

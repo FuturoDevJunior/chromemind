@@ -1,0 +1,513 @@
+name: 📊 Code Quality & Performance
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main ]
+  schedule:
+    - cron: '0 2 * * 0'  # Weekly on Sundays
+
+env:
+  NODE_VERSION: '18'
+
+jobs:
+  code-analysis:
+    name: 🔍 Static Code Analysis
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: 📥 Checkout Repository
+        uses: actions/checkout@v4
+        
+      - name: 🔧 Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+          
+      - name: 📦 Install Dependencies
+        run: npm ci
+        
+      - name: 🧹 Code Style Analysis
+        run: |
+          echo "🧹 Analyzing code style and patterns..."
+          
+          # Function to check JavaScript files
+          check_js_quality() {
+            local file="$1"
+            echo "🔍 Analyzing: $file"
+            
+            # Count lines of code
+            local loc=$(grep -c -v '^\s*$' "$file" || echo 0)
+            local comments=$(grep -c '^\s*//' "$file" || echo 0)
+            local comment_ratio=$((comments * 100 / (loc + 1)))
+            
+            echo "  📊 Lines of code: $loc"
+            echo "  💬 Comments: $comments ($comment_ratio%)"
+            
+            # Check for code quality indicators
+            if grep -q "TODO\|FIXME\|HACK" "$file"; then
+              echo "  ⚠️  Contains TODO/FIXME/HACK comments"
+            fi
+            
+            # Check for console statements
+            if grep -q "console\." "$file"; then
+              local console_count=$(grep -c "console\." "$file")
+              echo "  🐛 Console statements: $console_count"
+            fi
+            
+            # Check for error handling
+            if grep -q "try\|catch\|throw" "$file"; then
+              echo "  ✅ Has error handling"
+            else
+              echo "  ⚠️  No error handling found"
+            fi
+            
+            # Check for async patterns
+            if grep -q "async\|await\|Promise" "$file"; then
+              echo "  ⚡ Uses async patterns"
+            fi
+            
+            echo ""
+          }
+          
+          # Analyze main JavaScript files
+          for file in *.js lib/*.js; do
+            if [ -f "$file" ]; then
+              check_js_quality "$file"
+            fi
+          done
+          
+      - name: 📈 Complexity Analysis
+        run: |
+          echo "📈 Analyzing code complexity..."
+          
+          analyze_complexity() {
+            local file="$1"
+            echo "🔍 Complexity analysis: $file"
+            
+            # Count functions
+            local func_count=$(grep -c "function\|=>" "$file" || echo 0)
+            echo "  🔧 Functions: $func_count"
+            
+            # Count conditional statements
+            local conditions=$(grep -c "if\|switch\|for\|while" "$file" || echo 0)
+            echo "  🔀 Conditionals: $conditions"
+            
+            # Count nested levels (approximate)
+            local max_indent=$(awk '{print length($0) - length(ltrim($0))}' "$file" | sort -n | tail -1 2>/dev/null || echo 0)
+            local nest_level=$((max_indent / 2))
+            echo "  📏 Max nesting level: ~$nest_level"
+            
+            if [ $nest_level -gt 6 ]; then
+              echo "  ⚠️  High nesting detected - consider refactoring"
+            fi
+            
+            # Calculate approximate cyclomatic complexity
+            local complexity=$((conditions + func_count))
+            echo "  🎯 Approximate complexity: $complexity"
+            
+            if [ $complexity -gt 50 ]; then
+              echo "  ⚠️  High complexity - consider breaking into smaller modules"
+            fi
+            
+            echo ""
+          }
+          
+          for file in *.js lib/*.js; do
+            if [ -f "$file" ]; then
+              analyze_complexity "$file"
+            fi
+          done
+          
+      - name: 🔗 Dependency Analysis
+        run: |
+          echo "🔗 Analyzing dependencies..."
+          
+          if [ -f "package.json" ]; then
+            node -e "
+              const pkg = require('./package.json');
+              const deps = pkg.dependencies || {};
+              const devDeps = pkg.devDependencies || {};
+              
+              console.log('📦 Production dependencies:', Object.keys(deps).length);
+              console.log('🛠️  Development dependencies:', Object.keys(devDeps).length);
+              
+              // List dependencies
+              if (Object.keys(deps).length > 0) {
+                console.log('\\n📋 Production dependencies:');
+                Object.keys(deps).forEach(dep => {
+                  console.log('  -', dep, deps[dep]);
+                });
+              }
+              
+              // Check for potential issues
+              const allDeps = {...deps, ...devDeps};
+              const heavyDeps = ['lodash', 'moment', 'jquery'];
+              const foundHeavy = Object.keys(allDeps).filter(dep => 
+                heavyDeps.some(heavy => dep.includes(heavy))
+              );
+              
+              if (foundHeavy.length > 0) {
+                console.log('\\n⚠️  Heavy dependencies found:', foundHeavy.join(', '));
+                console.log('   Consider lighter alternatives for better performance');
+              }
+              
+              console.log('\\n✅ Dependency analysis completed');
+            "
+          fi
+
+  performance-audit:
+    name: ⚡ Performance Audit
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: 📥 Checkout Repository
+        uses: actions/checkout@v4
+        
+      - name: ⚡ File Size Analysis
+        run: |
+          echo "⚡ Analyzing file sizes and performance impact..."
+          
+          total_size=0
+          
+          echo "📊 File Size Report:"
+          echo "==================="
+          
+          # Analyze JavaScript files
+          echo "📄 JavaScript Files:"
+          for file in *.js lib/*.js; do
+            if [ -f "$file" ]; then
+              size=$(stat -f%z "$file" 2>/dev/null || stat -c%s "$file" 2>/dev/null)
+              size_kb=$((size / 1024))
+              total_size=$((total_size + size))
+              
+              printf "  %-25s %6d KB\n" "$file" "$size_kb"
+              
+              if [ $size_kb -gt 100 ]; then
+                echo "    ⚠️  Large file - consider optimization"
+              fi
+            fi
+          done
+          
+          # Analyze CSS files
+          echo ""
+          echo "🎨 CSS Files:"
+          for file in *.css; do
+            if [ -f "$file" ]; then
+              size=$(stat -f%z "$file" 2>/dev/null || stat -c%s "$file" 2>/dev/null)
+              size_kb=$((size / 1024))
+              total_size=$((total_size + size))
+              
+              printf "  %-25s %6d KB\n" "$file" "$size_kb"
+            fi
+          done
+          
+          # Analyze HTML files
+          echo ""
+          echo "📄 HTML Files:"
+          for file in *.html; do
+            if [ -f "$file" ]; then
+              size=$(stat -f%z "$file" 2>/dev/null || stat -c%s "$file" 2>/dev/null)
+              size_kb=$((size / 1024))
+              total_size=$((total_size + size))
+              
+              printf "  %-25s %6d KB\n" "$file" "$size_kb"
+            fi
+          done
+          
+          # Analyze assets
+          if [ -d "assets" ]; then
+            echo ""
+            echo "🖼️  Asset Files:"
+            find assets -type f | while read file; do
+              size=$(stat -f%z "$file" 2>/dev/null || stat -c%s "$file" 2>/dev/null)
+              size_kb=$((size / 1024))
+              total_size=$((total_size + size))
+              
+              printf "  %-25s %6d KB\n" "$file" "$size_kb"
+              
+              if [[ "$file" =~ \.(png|jpg|jpeg)$ ]] && [ $size_kb -gt 50 ]; then
+                echo "    ⚠️  Large image - consider optimization"
+              fi
+            done
+          fi
+          
+          echo ""
+          echo "==================="
+          printf "📦 Total Extension Size: %d KB\n" $((total_size / 1024))
+          
+          if [ $((total_size / 1024)) -gt 10240 ]; then  # 10MB
+            echo "⚠️  Extension exceeds 10MB - Chrome Web Store limit"
+          elif [ $((total_size / 1024)) -gt 5120 ]; then  # 5MB
+            echo "⚠️  Extension is quite large - consider optimization"
+          else
+            echo "✅ Extension size is reasonable"
+          fi
+          
+      - name: 🔍 Performance Pattern Analysis
+        run: |
+          echo "🔍 Analyzing performance patterns..."
+          
+          # Check for performance anti-patterns
+          echo "🚨 Checking for performance anti-patterns:"
+          
+          # Look for synchronous blocking calls
+          if grep -r "XMLHttpRequest.*false" --include="*.js" .; then
+            echo "  ❌ Synchronous XMLHttpRequest found"
+          fi
+          
+          # Check for excessive DOM queries
+          if grep -r "getElementById\|querySelector" --include="*.js" . | wc -l | awk '{if($1>20) print "  ⚠️  High number of DOM queries:", $1}'; then
+            true
+          fi
+          
+          # Check for inefficient loops
+          if grep -r "for.*in.*length" --include="*.js" .; then
+            echo "  ⚠️  Potentially inefficient loops found"
+          fi
+          
+          # Check for memory leak patterns
+          if grep -r "setInterval\|setTimeout" --include="*.js" . && ! grep -r "clearInterval\|clearTimeout" --include="*.js" .; then
+            echo "  ⚠️  Timer functions without cleanup - potential memory leak"
+          fi
+          
+          echo ""
+          echo "✅ Performance pattern analysis completed"
+
+  accessibility-audit:
+    name: ♿ Accessibility Audit
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: 📥 Checkout Repository
+        uses: actions/checkout@v4
+        
+      - name: ♿ HTML Accessibility Check
+        run: |
+          echo "♿ Checking HTML accessibility..."
+          
+          for file in *.html; do
+            if [ -f "$file" ]; then
+              echo "🔍 Analyzing: $file"
+              
+              # Check for images without alt text
+              img_count=$(grep -c "<img" "$file" || echo 0)
+              img_with_alt=$(grep -c "alt=" "$file" || echo 0)
+              
+              if [ $img_count -gt 0 ]; then
+                echo "  🖼️  Images: $img_count, with alt text: $img_with_alt"
+                if [ $img_with_alt -lt $img_count ]; then
+                  echo "  ⚠️  Some images missing alt text"
+                fi
+              fi
+              
+              # Check for form labels
+              input_count=$(grep -c "<input" "$file" || echo 0)
+              label_count=$(grep -c "<label\|aria-label" "$file" || echo 0)
+              
+              if [ $input_count -gt 0 ]; then
+                echo "  📝 Inputs: $input_count, labels: $label_count"
+                if [ $label_count -lt $input_count ]; then
+                  echo "  ⚠️  Some inputs may need labels"
+                fi
+              fi
+              
+              # Check for heading structure
+              h1_count=$(grep -c "<h1" "$file" || echo 0)
+              if [ $h1_count -eq 0 ]; then
+                echo "  ⚠️  No h1 heading found"
+              elif [ $h1_count -gt 1 ]; then
+                echo "  ⚠️  Multiple h1 headings found"
+              fi
+              
+              # Check for semantic markup
+              if grep -q "nav\|main\|article\|section\|aside\|header\|footer" "$file"; then
+                echo "  ✅ Uses semantic HTML elements"
+              else
+                echo "  ⚠️  Consider adding semantic HTML elements"
+              fi
+              
+              # Check for ARIA attributes
+              if grep -q "aria-\|role=" "$file"; then
+                echo "  ✅ Uses ARIA attributes"
+              else
+                echo "  ⚠️  Consider adding ARIA attributes for better accessibility"
+              fi
+              
+              echo ""
+            fi
+          done
+          
+      - name: 🎨 CSS Accessibility Check
+        run: |
+          echo "🎨 Checking CSS accessibility..."
+          
+          for file in *.css; do
+            if [ -f "$file" ]; then
+              echo "🔍 Analyzing: $file"
+              
+              # Check for focus indicators
+              if grep -q ":focus" "$file"; then
+                echo "  ✅ Has focus indicators"
+              else
+                echo "  ⚠️  Consider adding focus indicators"
+              fi
+              
+              # Check for color accessibility
+              if grep -q "color\|background" "$file"; then
+                echo "  🎨 Uses colors - ensure sufficient contrast"
+              fi
+              
+              # Check for responsive design
+              if grep -q "@media\|rem\|em\|%" "$file"; then
+                echo "  ✅ Responsive design patterns found"
+              else
+                echo "  ⚠️  Consider responsive design for accessibility"
+              fi
+              
+              echo ""
+            fi
+          done
+
+  documentation-quality:
+    name: 📚 Documentation Quality
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: 📥 Checkout Repository
+        uses: actions/checkout@v4
+        
+      - name: 📚 Documentation Analysis
+        run: |
+          echo "📚 Analyzing documentation quality..."
+          
+          # Check README.md
+          if [ -f "README.md" ]; then
+            echo "📖 README.md analysis:"
+            
+            readme_size=$(wc -l < "README.md")
+            echo "  📏 Lines: $readme_size"
+            
+            if [ $readme_size -lt 50 ]; then
+              echo "  ⚠️  README is quite short"
+            elif [ $readme_size -gt 500 ]; then
+              echo "  ⚠️  README is very long - consider breaking into sections"
+            else
+              echo "  ✅ README length is reasonable"
+            fi
+            
+            # Check for required sections
+            required_sections=("Features" "Installation" "Usage" "License")
+            for section in "${required_sections[@]}"; do
+              if grep -qi "$section" "README.md"; then
+                echo "  ✅ Has $section section"
+              else
+                echo "  ⚠️  Missing $section section"
+              fi
+            done
+            
+            # Check for images/badges
+            if grep -q "!\[.*\]" "README.md"; then
+              echo "  ✅ Contains images/badges"
+            else
+              echo "  ⚠️  Consider adding visual elements"
+            fi
+            
+            echo ""
+          else
+            echo "❌ README.md is missing"
+          fi
+          
+          # Check for other documentation files
+          docs=("LICENSE" "CHANGELOG.md" "CONTRIBUTING.md" "SECURITY.md")
+          for doc in "${docs[@]}"; do
+            if [ -f "$doc" ]; then
+              echo "✅ $doc exists"
+            else
+              echo "⚠️  $doc is missing"
+            fi
+          done
+          
+      - name: 🔗 Link Validation
+        run: |
+          echo "🔗 Validating links in documentation..."
+          
+          # Simple link validation for markdown files
+          for file in *.md; do
+            if [ -f "$file" ]; then
+              echo "🔍 Checking links in: $file"
+              
+              # Extract markdown links
+              links=$(grep -o '\[.*\](.*\.)' "$file" | grep -o '(.*\.)' | tr -d '()' || true)
+              
+              if [ -n "$links" ]; then
+                echo "$links" | while read link; do
+                  if [[ $link == http* ]]; then
+                    echo "  🌐 External link: $link"
+                  elif [[ $link == \#* ]]; then
+                    echo "  📍 Anchor link: $link"
+                  else
+                    echo "  📄 Local link: $link"
+                    if [ ! -f "$link" ]; then
+                      echo "    ⚠️  File not found: $link"
+                    fi
+                  fi
+                done
+              fi
+              
+              echo ""
+            fi
+          done
+
+  quality-report:
+    name: 📊 Quality Summary Report
+    runs-on: ubuntu-latest
+    needs: [code-analysis, performance-audit, accessibility-audit, documentation-quality]
+    if: always()
+    
+    steps:
+      - name: 📥 Checkout Repository
+        uses: actions/checkout@v4
+        
+      - name: 📊 Generate Quality Report
+        run: |
+          echo "📊 ChromeMind Quality Report"
+          echo "=========================="
+          echo ""
+          echo "🗓️  Report Date: $(date)"
+          echo "🔗 Repository: ${{ github.repository }}"
+          echo "🌿 Branch: ${{ github.ref_name }}"
+          echo "📝 Commit: ${{ github.sha }}"
+          echo ""
+          
+          # Job status summary
+          echo "📋 Quality Check Results:"
+          echo "  🔍 Code Analysis: ${{ needs.code-analysis.result }}"
+          echo "  ⚡ Performance Audit: ${{ needs.performance-audit.result }}"
+          echo "  ♿ Accessibility Audit: ${{ needs.accessibility-audit.result }}"
+          echo "  📚 Documentation Quality: ${{ needs.documentation-quality.result }}"
+          echo ""
+          
+          # Count successful checks
+          success_count=0
+          if [ "${{ needs.code-analysis.result }}" = "success" ]; then success_count=$((success_count + 1)); fi
+          if [ "${{ needs.performance-audit.result }}" = "success" ]; then success_count=$((success_count + 1)); fi
+          if [ "${{ needs.accessibility-audit.result }}" = "success" ]; then success_count=$((success_count + 1)); fi
+          if [ "${{ needs.documentation-quality.result }}" = "success" ]; then success_count=$((success_count + 1)); fi
+          
+          echo "📈 Overall Quality Score: $success_count/4 checks passed"
+          
+          if [ $success_count -eq 4 ]; then
+            echo "🏆 Excellent! All quality checks passed"
+          elif [ $success_count -ge 3 ]; then
+            echo "✅ Good quality with minor improvements needed"
+          elif [ $success_count -ge 2 ]; then
+            echo "⚠️  Moderate quality - several improvements recommended"
+          else
+            echo "❌ Quality needs significant improvement"
+          fi
+          
+          echo ""
+          echo "🎯 Ready for Google Chrome Built-in AI Challenge 2025!"

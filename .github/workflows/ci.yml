@@ -1,0 +1,365 @@
+name: 🚀 CI/CD Pipeline
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main ]
+  release:
+    types: [ published ]
+
+env:
+  NODE_VERSION: '18'
+  CHROME_VERSION: 'stable'
+
+jobs:
+  validation:
+    name: 🔍 Extension Validation
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: 📥 Checkout Repository
+        uses: actions/checkout@v4
+        
+      - name: 🔧 Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+          
+      - name: 📦 Install Dependencies
+        run: npm ci
+        
+      - name: 🔎 Validate Manifest
+        run: npm run validate
+        
+      - name: 🧪 Syntax Validation
+        run: npm test
+        
+      - name: 📋 Manifest Schema Check
+        run: |
+          echo "🔍 Validating manifest.json against Chrome Extension schema..."
+          node -e "
+            const manifest = require('./manifest.json');
+            const requiredFields = ['manifest_version', 'name', 'version', 'description'];
+            const missingFields = requiredFields.filter(field => !manifest[field]);
+            if (missingFields.length > 0) {
+              console.error('❌ Missing required fields:', missingFields);
+              process.exit(1);
+            }
+            if (manifest.manifest_version !== 3) {
+              console.error('❌ Must use Manifest V3');
+              process.exit(1);
+            }
+            console.log('✅ Manifest validation passed');
+          "
+          
+      - name: 🎯 Built-in AI APIs Check
+        run: |
+          echo "🔍 Verifying Built-in AI API usage..."
+          node -e "
+            const fs = require('fs');
+            const builtInApis = ['Summarizer', 'Translator', 'LanguageDetector', 'Prompt', 'Proofreader', 'Writer', 'Rewriter'];
+            let found = [];
+            
+            // Check main files for API usage
+            const files = ['sidepanel.js', 'content.js', 'service_worker.js'];
+            files.forEach(file => {
+              if (fs.existsSync(file)) {
+                const content = fs.readFileSync(file, 'utf8');
+                builtInApis.forEach(api => {
+                  if (content.includes(api.toLowerCase()) || content.includes('ai.' + api.toLowerCase())) {
+                    found.push(api);
+                  }
+                });
+              }
+            });
+            
+            if (found.length === 0) {
+              console.error('❌ No Built-in AI API usage detected');
+              process.exit(1);
+            }
+            
+            console.log('✅ Found Built-in AI APIs:', found.join(', '));
+          "
+
+  security:
+    name: 🛡️ Security Audit
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: 📥 Checkout Repository
+        uses: actions/checkout@v4
+        
+      - name: 🔧 Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+          
+      - name: 📦 Install Dependencies
+        run: npm ci
+        
+      - name: 🔒 Security Audit
+        run: npm audit --audit-level=high
+        
+      - name: 🛡️ Content Security Policy Check
+        run: |
+          echo "🔍 Checking Content Security Policy compliance..."
+          node -e "
+            const fs = require('fs');
+            const files = ['sidepanel.html'];
+            let hasUnsafeInline = false;
+            
+            files.forEach(file => {
+              if (fs.existsSync(file)) {
+                const content = fs.readFileSync(file, 'utf8');
+                if (content.includes('onclick=') || content.includes('onload=') || content.includes('javascript:')) {
+                  hasUnsafeInline = true;
+                }
+              }
+            });
+            
+            if (hasUnsafeInline) {
+              console.error('❌ CSP violation: Inline JavaScript detected');
+              process.exit(1);
+            }
+            
+            console.log('✅ CSP compliance check passed');
+          "
+          
+      - name: 🔐 Permission Audit
+        run: |
+          echo "🔍 Auditing extension permissions..."
+          node -e "
+            const manifest = require('./manifest.json');
+            const permissions = manifest.permissions || [];
+            const hostPermissions = manifest.host_permissions || [];
+            
+            console.log('📋 Declared permissions:', permissions.join(', '));
+            console.log('🌐 Host permissions:', hostPermissions.join(', '));
+            
+            // Check for overly broad permissions
+            if (hostPermissions.includes('<all_urls>')) {
+              console.log('⚠️  Using <all_urls> permission - ensure this is necessary');
+            }
+            
+            console.log('✅ Permission audit completed');
+          "
+
+  chrome-extension-test:
+    name: 🧪 Chrome Extension Testing
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: 📥 Checkout Repository
+        uses: actions/checkout@v4
+        
+      - name: 🔧 Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+          
+      - name: 📦 Install Dependencies
+        run: npm ci
+        
+      - name: 🖥️ Setup Chrome
+        uses: browser-actions/setup-chrome@v1
+        with:
+          chrome-version: ${{ env.CHROME_VERSION }}
+          
+      - name: 📦 Create Extension Package
+        run: |
+          echo "📦 Creating extension package..."
+          mkdir -p dist
+          
+          # Copy all necessary files
+          cp manifest.json dist/
+          cp service_worker.js dist/
+          cp sidepanel.html dist/
+          cp sidepanel.js dist/
+          cp content.js dist/
+          cp styles.css dist/
+          cp -r lib dist/
+          cp -r hybrid dist/
+          cp -r assets dist/
+          
+          echo "✅ Extension package created in dist/"
+          
+      - name: 🔍 Extension Load Test
+        run: |
+          echo "🔍 Testing extension loading..."
+          node -e "
+            const fs = require('fs');
+            const path = require('path');
+            
+            // Verify all required files exist
+            const requiredFiles = [
+              'dist/manifest.json',
+              'dist/service_worker.js',
+              'dist/sidepanel.html',
+              'dist/sidepanel.js',
+              'dist/content.js'
+            ];
+            
+            requiredFiles.forEach(file => {
+              if (!fs.existsSync(file)) {
+                console.error('❌ Missing required file:', file);
+                process.exit(1);
+              }
+            });
+            
+            console.log('✅ All required files present');
+          "
+          
+      - name: 📤 Upload Extension Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: chromemind-extension-${{ github.sha }}
+          path: dist/
+          retention-days: 30
+
+  code-quality:
+    name: 🎯 Code Quality
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: 📥 Checkout Repository
+        uses: actions/checkout@v4
+        
+      - name: 🔧 Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          
+      - name: 🧼 Code Style Check
+        run: |
+          echo "🧼 Checking code style and best practices..."
+          
+          # Check for console.log statements (should be removed in production)
+          if grep -r "console\.log" --include="*.js" --exclude-dir=node_modules . | grep -v "// Debug:" | grep -v "// TODO:"; then
+            echo "⚠️  Found console.log statements - consider removing for production"
+          fi
+          
+          # Check for proper error handling
+          if ! grep -r "try\|catch\|throw" --include="*.js" --exclude-dir=node_modules . > /dev/null; then
+            echo "⚠️  No error handling found - consider adding try/catch blocks"
+          fi
+          
+          echo "✅ Code quality check completed"
+          
+      - name: 📊 File Size Analysis
+        run: |
+          echo "📊 Analyzing extension file sizes..."
+          
+          total_size=0
+          max_file_size=1048576  # 1MB limit per file
+          
+          for file in *.js *.html *.css; do
+            if [ -f "$file" ]; then
+              size=$(stat -f%z "$file" 2>/dev/null || stat -c%s "$file" 2>/dev/null || echo 0)
+              echo "📄 $file: $(($size / 1024))KB"
+              
+              if [ $size -gt $max_file_size ]; then
+                echo "❌ $file exceeds 1MB limit"
+                exit 1
+              fi
+              
+              total_size=$(($total_size + $size))
+            fi
+          done
+          
+          echo "📦 Total extension size: $(($total_size / 1024))KB"
+          
+          if [ $total_size -gt 10485760 ]; then  # 10MB total limit
+            echo "❌ Extension exceeds 10MB total size limit"
+            exit 1
+          fi
+          
+          echo "✅ File size analysis passed"
+
+  accessibility:
+    name: ♿ Accessibility Audit
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: 📥 Checkout Repository
+        uses: actions/checkout@v4
+        
+      - name: 🔧 Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          
+      - name: ♿ HTML Accessibility Check
+        run: |
+          echo "♿ Checking HTML accessibility..."
+          node -e "
+            const fs = require('fs');
+            
+            if (fs.existsSync('sidepanel.html')) {
+              const content = fs.readFileSync('sidepanel.html', 'utf8');
+              
+              // Check for alt attributes on images
+              const imgTags = content.match(/<img[^>]*>/g) || [];
+              imgTags.forEach((img, index) => {
+                if (!img.includes('alt=')) {
+                  console.log('⚠️  Image #' + (index + 1) + ' missing alt attribute');
+                }
+              });
+              
+              // Check for button labels
+              const buttonTags = content.match(/<button[^>]*>.*?<\/button>/g) || [];
+              buttonTags.forEach((button, index) => {
+                if (!button.includes('aria-label') && !button.match(/>\\s*\\w+.*</)) {
+                  console.log('⚠️  Button #' + (index + 1) + ' may need better labeling');
+                }
+              });
+              
+              console.log('✅ Accessibility check completed');
+            }
+          "
+
+  performance:
+    name: ⚡ Performance Analysis
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: 📥 Checkout Repository
+        uses: actions/checkout@v4
+        
+      - name: ⚡ Performance Metrics
+        run: |
+          echo "⚡ Analyzing performance metrics..."
+          
+          # Check for large dependencies
+          if [ -f "package.json" ]; then
+            node -e "
+              const pkg = require('./package.json');
+              const deps = Object.keys(pkg.dependencies || {});
+              
+              console.log('📦 Dependencies:', deps.length);
+              
+              if (deps.length > 10) {
+                console.log('⚠️  High number of dependencies - consider optimization');
+              }
+              
+              console.log('✅ Dependency analysis completed');
+            "
+          fi
+          
+          # Check JavaScript file complexity
+          echo "🔍 Analyzing JavaScript complexity..."
+          for file in *.js lib/*.js; do
+            if [ -f "$file" ]; then
+              lines=$(wc -l < "$file")
+              echo "📄 $file: $lines lines"
+              
+              if [ $lines -gt 500 ]; then
+                echo "⚠️  $file is quite large - consider breaking into modules"
+              fi
+            fi
+          done
+          
+          echo "✅ Performance analysis completed"

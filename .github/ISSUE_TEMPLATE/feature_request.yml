@@ -1,0 +1,244 @@
+name: ✨ Feature Request
+description: Suggest a new feature or enhancement for ChromeMind
+title: "[Feature] "
+labels: ["enhancement", "needs-triage"]
+assignees: []
+
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thank you for suggesting a new feature! Please provide details about your idea to help us understand and evaluate it.
+
+  - type: checkboxes
+    id: preliminary-checks
+    attributes:
+      label: 🔍 Preliminary Checks
+      description: Please confirm you've completed these steps
+      options:
+        - label: I have searched existing issues for similar feature requests
+          required: true
+        - label: I have reviewed the current feature set in the documentation
+          required: true
+        - label: This feature aligns with ChromeMind's focus on Built-in AI APIs
+          required: true
+
+  - type: dropdown
+    id: feature-category
+    attributes:
+      label: 🏷️ Feature Category
+      description: What type of feature are you requesting?
+      options:
+        - New AI API integration
+        - User interface enhancement
+        - Performance optimization
+        - Accessibility improvement
+        - Security enhancement
+        - Developer experience
+        - Documentation improvement
+        - Testing/Quality assurance
+        - Competition/Hackathon specific
+        - Other
+    validations:
+      required: true
+
+  - type: textarea
+    id: feature-summary
+    attributes:
+      label: ✨ Feature Summary
+      description: A clear and concise description of the feature you'd like to see
+      placeholder: Briefly describe the feature you're requesting...
+    validations:
+      required: true
+
+  - type: textarea
+    id: problem-statement
+    attributes:
+      label: 🎯 Problem Statement
+      description: What problem does this feature solve?
+      placeholder: |
+        Describe the current limitation or pain point that this feature would address.
+        Is this something that affects users, developers, or competition judges?
+    validations:
+      required: true
+
+  - type: textarea
+    id: proposed-solution
+    attributes:
+      label: 💡 Proposed Solution
+      description: How would you like this feature to work?
+      placeholder: |
+        Describe your ideal solution in detail:
+        - How would users interact with this feature?
+        - What would the UI/UX look like?
+        - How would it integrate with existing functionality?
+    validations:
+      required: true
+
+  - type: textarea
+    id: alternative-solutions
+    attributes:
+      label: 🔄 Alternative Solutions
+      description: Have you considered any alternative approaches?
+      placeholder: |
+        Describe any alternative solutions or features you've considered:
+        - Different implementation approaches
+        - Workarounds you're currently using
+        - Similar features in other extensions
+
+  - type: dropdown
+    id: ai-api-involvement
+    attributes:
+      label: 🤖 Chrome Built-in AI API Usage
+      description: Does this feature involve Chrome's Built-in AI APIs?
+      options:
+        - "Yes - New AI API integration"
+        - "Yes - Enhancement to existing AI feature"
+        - "No - UI/UX improvement"
+        - "No - Infrastructure/tooling"
+        - "Partially - Hybrid functionality"
+    validations:
+      required: true
+
+  - type: textarea
+    id: ai-api-details
+    attributes:
+      label: 🔧 AI API Technical Details
+      description: |
+        If this involves AI APIs, please provide technical details:
+      placeholder: |
+        - Which AI API(s): [Summarizer/Translator/Prompt/Writer/etc.]
+        - New functionality: [What new capability would this add?]
+        - Integration points: [How would this work with existing features?]
+        - Origin Trial requirements: [Does this need Origin Trial access?]
+
+  - type: textarea
+    id: user-stories
+    attributes:
+      label: 👤 User Stories
+      description: Describe how different users would benefit from this feature
+      placeholder: |
+        Please provide user stories in the format:
+        "As a [type of user], I want [feature] so that [benefit]"
+        
+        Examples:
+        - As a student, I want... so that...
+        - As a researcher, I want... so that...
+        - As a developer, I want... so that...
+        - As a competition judge, I want... so that...
+
+  - type: textarea
+    id: mockups-wireframes
+    attributes:
+      label: 🎨 Mockups/Wireframes
+      description: |
+        If applicable, provide mockups, wireframes, or detailed UI descriptions
+        You can drag and drop images here
+
+  - type: dropdown
+    id: priority-level
+    attributes:
+      label: 📊 Priority Level
+      description: How important is this feature?
+      options:
+        - 🔴 High - Critical for competition success
+        - 🟡 Medium - Would significantly improve the extension
+        - 🟢 Low - Nice-to-have enhancement
+        - ⚪ Future - Good idea for future versions
+    validations:
+      required: true
+
+  - type: dropdown
+    id: competition-impact
+    attributes:
+      label: 🏆 Competition Impact
+      description: How would this feature impact the Google Chrome Built-in AI Challenge submission?
+      options:
+        - Directly improves competition scoring potential
+        - Enhances user experience for judges
+        - Demonstrates advanced AI API usage
+        - Improves technical implementation quality
+        - Not directly competition-related
+        - Unsure about competition impact
+    validations:
+      required: true
+
+  - type: textarea
+    id: technical-considerations
+    attributes:
+      label: ⚙️ Technical Considerations
+      description: Any technical aspects to consider?
+      placeholder: |
+        Consider these aspects:
+        - Performance implications
+        - Security requirements
+        - Browser compatibility
+        - Manifest V3 constraints
+        - Chrome Web Store policies
+        - Built-in AI API limitations
+        - Implementation complexity
+
+  - type: textarea
+    id: success-criteria
+    attributes:
+      label: ✅ Success Criteria
+      description: How would we know this feature is successful?
+      placeholder: |
+        Define success criteria:
+        - Functional requirements (what it must do)
+        - Performance requirements (how fast/efficient)
+        - User experience goals (ease of use, accessibility)
+        - Competition goals (judge appeal, scoring criteria)
+
+  - type: textarea
+    id: testing-strategy
+    attributes:
+      label: 🧪 Testing Strategy
+      description: How should this feature be tested?
+      placeholder: |
+        Describe testing approach:
+        - Unit tests needed
+        - Integration testing requirements
+        - User acceptance testing scenarios
+        - AI API testing considerations
+        - Cross-browser testing needs
+
+  - type: checkboxes
+    id: implementation-scope
+    attributes:
+      label: 🔧 Implementation Scope
+      description: What areas would this feature affect?
+      options:
+        - Manifest.json changes
+        - Service worker modifications
+        - Side panel UI updates
+        - Content script changes
+        - New AI API integrations
+        - Documentation updates
+        - Testing infrastructure
+        - Build/deployment process
+
+  - type: textarea
+    id: additional-context
+    attributes:
+      label: 📝 Additional Context
+      description: Any other information about this feature request
+      placeholder: |
+        Additional details:
+        - Links to relevant documentation
+        - Examples from other extensions
+        - Research or articles supporting this feature
+        - Timeline considerations
+        - Resource requirements
+
+  - type: checkboxes
+    id: contribution-willingness
+    attributes:
+      label: 🤝 Contribution
+      description: Are you willing to help implement this feature?
+      options:
+        - label: I can help with design/specification
+        - label: I can contribute code/implementation
+        - label: I can help with testing
+        - label: I can assist with documentation
+        - label: I can provide ongoing feedback

@@ -1,0 +1,204 @@
+name: 🐛 Bug Report
+description: Report a bug or issue with ChromeMind
+title: "[Bug] "
+labels: ["bug", "needs-triage"]
+assignees: []
+
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thank you for reporting a bug! Please fill out the information below to help us resolve the issue quickly.
+
+  - type: checkboxes
+    id: preliminary-checks
+    attributes:
+      label: 🔍 Preliminary Checks
+      description: Please confirm you've completed these steps before reporting
+      options:
+        - label: I have searched existing issues for duplicates
+          required: true
+        - label: I have tested with the latest version of ChromeMind
+          required: true
+        - label: I have read the documentation and testing instructions
+          required: true
+
+  - type: dropdown
+    id: bug-category
+    attributes:
+      label: 🏷️ Bug Category
+      description: What type of issue are you experiencing?
+      options:
+        - Built-in AI API functionality
+        - Extension installation/loading
+        - Side panel interface
+        - Content script functionality
+        - Performance issues
+        - Compatibility issues
+        - Security concerns
+        - Other
+    validations:
+      required: true
+
+  - type: textarea
+    id: bug-description
+    attributes:
+      label: 🐛 Bug Description
+      description: A clear and concise description of what the bug is
+      placeholder: Describe what happened and what you expected to happen...
+    validations:
+      required: true
+
+  - type: textarea
+    id: reproduction-steps
+    attributes:
+      label: 🔄 Steps to Reproduce
+      description: Detailed steps to reproduce the issue
+      placeholder: |
+        1. Go to '...'
+        2. Click on '...'
+        3. See error
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected-behavior
+    attributes:
+      label: ✅ Expected Behavior
+      description: What should happen instead?
+      placeholder: Describe the expected behavior...
+    validations:
+      required: true
+
+  - type: textarea
+    id: actual-behavior
+    attributes:
+      label: ❌ Actual Behavior
+      description: What actually happened?
+      placeholder: Describe what actually happened...
+    validations:
+      required: true
+
+  - type: dropdown
+    id: browser-version
+    attributes:
+      label: 🌐 Chrome Version
+      description: Which version of Chrome are you using?
+      options:
+        - Chrome 128 (Current stable)
+        - Chrome 129 (Beta)
+        - Chrome 130+ (Canary/Dev)
+        - Other (please specify in Additional Context)
+    validations:
+      required: true
+
+  - type: dropdown
+    id: ai-apis-enabled
+    attributes:
+      label: 🤖 Built-in AI APIs Status
+      description: Do you have Chrome's Built-in AI APIs enabled?
+      options:
+        - "Yes - All APIs enabled"
+        - "Partial - Some APIs enabled"
+        - "No - APIs not enabled"
+        - "Unknown - Not sure how to check"
+    validations:
+      required: true
+
+  - type: dropdown
+    id: origin-trial
+    attributes:
+      label: 🧪 Origin Trial Status
+      description: Do you have Origin Trial tokens configured?
+      options:
+        - "Yes - Origin Trial active"
+        - "No - Using stable APIs only"
+        - "Unknown - Not sure"
+    validations:
+      required: true
+
+  - type: textarea
+    id: environment
+    attributes:
+      label: 💻 Environment
+      description: Additional environment details
+      placeholder: |
+        - OS: [e.g., macOS 13.0, Windows 11, Ubuntu 22.04]
+        - Chrome Version: [e.g., 128.0.6613.84]
+        - ChromeMind Version: [e.g., 1.0.0]
+        - Extension Load Method: [Load unpacked, CRX, etc.]
+    validations:
+      required: true
+
+  - type: textarea
+    id: console-logs
+    attributes:
+      label: 📋 Console Logs
+      description: |
+        Please include any relevant console logs (open DevTools > Console)
+        **Important**: Remove any sensitive information like API keys
+      placeholder: |
+        Paste console logs here...
+        
+        For Chrome Extension logs:
+        1. Go to chrome://extensions/
+        2. Click "Inspect views" under ChromeMind
+        3. Check Console for errors
+      render: shell
+
+  - type: textarea
+    id: screenshots
+    attributes:
+      label: 📸 Screenshots
+      description: |
+        If applicable, add screenshots to help explain the problem
+        You can drag and drop images here
+
+  - type: textarea
+    id: ai-response
+    attributes:
+      label: 🤖 AI Response Details
+      description: |
+        If the bug is related to AI functionality, please provide:
+        - Which AI API was being used
+        - Input text/prompt that caused the issue
+        - Expected vs actual AI response
+        - Any error messages from the AI API
+      placeholder: |
+        API: [Summarizer/Translator/Prompt/etc.]
+        Input: [Your input text]
+        Expected: [What should happen]
+        Actual: [What happened]
+        Error: [Any error messages]
+
+  - type: textarea
+    id: additional-context
+    attributes:
+      label: 📝 Additional Context
+      description: |
+        Add any other context about the problem here:
+        - Is this related to the Google Chrome Built-in AI Challenge?
+        - Does this affect the extension's competition readiness?
+        - Any workarounds you've found?
+        - Links to related documentation or issues
+
+  - type: checkboxes
+    id: urgency
+    attributes:
+      label: ⚡ Urgency Level
+      description: How urgent is this issue?
+      options:
+        - label: 🔴 Critical - Extension completely broken
+        - label: 🟡 High - Major feature not working
+        - label: 🟢 Medium - Minor issue or enhancement
+        - label: ⚪ Low - Cosmetic or nice-to-have
+
+  - type: checkboxes
+    id: contribution
+    attributes:
+      label: 🤝 Contribution
+      description: Are you willing to help?
+      options:
+        - label: I'm willing to submit a pull request to fix this issue
+        - label: I can help test potential fixes
+        - label: I can provide additional information if needed
