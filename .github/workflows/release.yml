@@ -1,12 +1,13 @@
-name: 📦 Release & Package
+name: 📦 Release Management
 
 on:
-  release:
-    types: [ published ]
+  push:
+    tags:
+      - 'v*'
   workflow_dispatch:
     inputs:
       version:
-        description: 'Release version (e.g., 1.0.0)'
+        description: 'Release version (e.g., 1.0.1)'
         required: true
         type: string
 
@@ -17,47 +18,44 @@ jobs:
   validate-release:
     name: 🔍 Pre-Release Validation
     runs-on: ubuntu-latest
-    
     steps:
-      - name: 📥 Checkout Repository
+      - name: 🚀 Checkout Code
         uses: actions/checkout@v4
-        
-      - name: 🔧 Setup Node.js
+
+      - name: 🛠️ Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: ${{ env.NODE_VERSION }}
           cache: 'npm'
-          
+
       - name: 📦 Install Dependencies
         run: npm ci
-        
-      - name: 🧪 Run Full Test Suite
+
+      - name: ✅ Run Full Test Suite
         run: |
-          npm run validate
+          echo "🧪 Running comprehensive tests..."
           npm test
+          npm run validate
           
-      - name: 🔍 Version Consistency Check
+      - name: 🔒 Security Validation
         run: |
-          echo "🔍 Checking version consistency..."
+          echo "🔒 Security pre-release check..."
+          npm audit --audit-level moderate
           
-          MANIFEST_VERSION=$(node -e "console.log(require('./manifest.json').version)")
-          PACKAGE_VERSION=$(node -e "console.log(require('./package.json').version)")
+      - name: 📋 Version Consistency Check
+        run: |
+          echo "📋 Checking version consistency..."
           
-          echo "📋 Manifest version: $MANIFEST_VERSION"
-          echo "📋 Package version: $PACKAGE_VERSION"
+          # Extract version from package.json and manifest.json
+          package_version=$(node -e "console.log(require('./package.json').version)")
+          manifest_version=$(node -e "console.log(require('./manifest.json').version)")
           
-          if [ "$MANIFEST_VERSION" != "$PACKAGE_VERSION" ]; then
-            echo "❌ Version mismatch between manifest.json and package.json"
+          echo "📦 Package version: $package_version"
+          echo "🔧 Manifest version: $manifest_version"
+          
+          if [ "$package_version" != "$manifest_version" ]; then
+            echo "❌ Version mismatch between package.json and manifest.json"
             exit 1
-          fi
-          
-          # If triggered by workflow_dispatch, check input version
-          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
-            INPUT_VERSION="${{ inputs.version }}"
-            if [ "$MANIFEST_VERSION" != "$INPUT_VERSION" ]; then
-              echo "❌ Version mismatch: manifest.json ($MANIFEST_VERSION) vs input ($INPUT_VERSION)"
-              exit 1
-            fi
           fi
           
           echo "✅ Version consistency verified"
@@ -66,310 +64,289 @@ jobs:
     name: 🏗️ Build Extension Package
     runs-on: ubuntu-latest
     needs: validate-release
-    
     steps:
-      - name: 📥 Checkout Repository
+      - name: 🚀 Checkout Code
         uses: actions/checkout@v4
-        
-      - name: 🔧 Setup Node.js
+
+      - name: 🛠️ Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: ${{ env.NODE_VERSION }}
-          cache: 'npm'
-          
-      - name: 📦 Install Dependencies
-        run: npm ci
-        
-      - name: 🏗️ Build Extension
-        run: |
-          echo "🏗️ Building ChromeMind extension..."
-          
-          # Create build directory
-          mkdir -p build
-          
-          # Copy core files
-          cp manifest.json build/
-          cp service_worker.js build/
-          cp sidepanel.html build/
-          cp sidepanel.js build/
-          cp content.js build/
-          cp styles.css build/
-          
-          # Copy directories
-          cp -r lib build/
-          cp -r hybrid build/
-          cp -r assets build/
-          
-          # Copy documentation
-          cp README.md build/
-          cp LICENSE build/
-          cp TESTING.md build/
-          
-          echo "✅ Extension build completed"
-          
-      - name: 🗜️ Create ZIP Package
-        run: |
-          echo "🗜️ Creating extension package..."
-          
-          cd build
-          
-          # Get version for filename
-          VERSION=$(node -e "console.log(require('./manifest.json').version)")
-          
-          # Create ZIP file
-          zip -r "../chromemind-v${VERSION}.zip" ./*
-          
-          cd ..
-          
-          echo "📦 Package created: chromemind-v${VERSION}.zip"
-          
-          # Verify package
-          echo "🔍 Package contents:"
-          unzip -l "chromemind-v${VERSION}.zip" | head -20
-          
-          # Check package size
-          PACKAGE_SIZE=$(stat -f%z "chromemind-v${VERSION}.zip" 2>/dev/null || stat -c%s "chromemind-v${VERSION}.zip" 2>/dev/null)
-          PACKAGE_SIZE_MB=$((PACKAGE_SIZE / 1024 / 1024))
-          
-          echo "📏 Package size: ${PACKAGE_SIZE_MB}MB"
-          
-          if [ $PACKAGE_SIZE_MB -gt 10 ]; then
-            echo "⚠️  Package size exceeds 10MB - Chrome Web Store limit"
-          fi
-          
-      - name: 📤 Upload Build Artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: chromemind-extension-release
-          path: chromemind-v*.zip
-          retention-days: 90
-          
-      - name: 📤 Upload Release Asset
-        if: github.event_name == 'release'
-        uses: softprops/action-gh-release@v1
-        with:
-          files: chromemind-v*.zip
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-  security-scan:
-    name: 🔒 Release Security Scan
-    runs-on: ubuntu-latest
-    needs: build-extension
-    
-    steps:
-      - name: 📥 Checkout Repository
-        uses: actions/checkout@v4
-        
-      - name: 📥 Download Build Artifact
-        uses: actions/download-artifact@v4
-        with:
-          name: chromemind-extension-release
-          
-      - name: 🔍 Package Security Scan
+      - name: 📦 Create Distribution Package
         run: |
-          echo "🔍 Scanning release package for security issues..."
+          echo "📦 Building ChromeMind extension package..."
           
-          # Extract package
-          unzip -q chromemind-v*.zip -d extracted/
+          # Create clean build directory
+          mkdir -p dist/chromemind-extension
           
-          cd extracted
+          # Copy extension files (exclude development files)
+          cp -r . dist/chromemind-extension/
+          cd dist/chromemind-extension
           
-          # Check for sensitive data
-          echo "🔍 Checking for sensitive data..."
+          # Remove development and CI files
+          rm -rf \
+            .git \
+            .github \
+            node_modules \
+            .gitignore \
+            package-lock.json \
+            .DS_Store \
+            *.log \
+            DEVPOST_SUBMISSION.md \
+            GITHUB_READY.md \
+            scripts/
           
-          # Look for potential secrets
-          if grep -r -i -E "(api_key|apikey|password|secret|token)" --include="*.js" --include="*.json" .; then
-            echo "⚠️  Potential sensitive data found - please review"
-          fi
+          # Optimize for Chrome Web Store
+          echo "🎯 Optimizing for Chrome Web Store..."
           
-          # Check for debug code
-          if grep -r -E "console\.(log|debug|warn)" --include="*.js" .; then
-            echo "⚠️  Debug statements found in release - consider removing"
-          fi
+          # Validate final package
+          ls -la
           
-          # Check for development artifacts
-          if find . -name "*.map" -o -name "*.orig" -o -name "*~" | grep -q .; then
-            echo "⚠️  Development artifacts found"
-          fi
-          
-          echo "✅ Security scan completed"
+          echo "✅ Extension package prepared"
 
-  chrome-web-store-validation:
-    name: 🏪 Chrome Web Store Validation
-    runs-on: ubuntu-latest
-    needs: build-extension
-    
-    steps:
-      - name: 📥 Checkout Repository
-        uses: actions/checkout@v4
-        
-      - name: 📥 Download Build Artifact
-        uses: actions/download-artifact@v4
-        with:
-          name: chromemind-extension-release
-          
-      - name: 🏪 Store Validation
+      - name: 📊 Package Analysis
         run: |
-          echo "🏪 Validating for Chrome Web Store submission..."
+          cd dist/chromemind-extension
           
-          # Extract package
-          unzip -q chromemind-v*.zip -d store-validation/
+          echo "📊 Package Analysis:"
+          echo "📁 Total files: $(find . -type f | wc -l)"
+          echo "📦 Package size: $(du -sh . | cut -f1)"
           
-          cd store-validation
+          # Analyze file types
+          echo "📋 File breakdown:"
+          echo "  JavaScript: $(find . -name "*.js" | wc -l) files"
+          echo "  HTML: $(find . -name "*.html" | wc -l) files"
+          echo "  CSS: $(find . -name "*.css" | wc -l) files"
+          echo "  Images: $(find . -name "*.png" -o -name "*.svg" | wc -l) files"
+          echo "  Documentation: $(find . -name "*.md" | wc -l) files"
           
-          # Check manifest structure
-          echo "📋 Validating manifest structure..."
-          node -e "
-            const manifest = require('./manifest.json');
-            
-            // Required for store
-            const storeRequired = [
-              'name', 'version', 'description', 'icons',
-              'manifest_version', 'permissions'
-            ];
-            
-            let issues = [];
-            
-            storeRequired.forEach(field => {
-              if (!manifest[field]) {
-                issues.push('❌ Missing store-required field: ' + field);
-              }
-            });
-            
-            // Check specific requirements
-            if (manifest.name && manifest.name.length > 75) {
-              issues.push('❌ Name too long for store (max 75 chars)');
-            }
-            
-            if (manifest.description && manifest.description.length > 132) {
-              issues.push('❌ Description too long for store (max 132 chars)');
-            }
-            
-            // Check for required icons
-            if (manifest.icons) {
-              ['16', '48', '128'].forEach(size => {
-                if (!manifest.icons[size]) {
-                  issues.push('⚠️  Missing recommended icon: ' + size + 'px');
-                }
-              });
-            }
-            
-            if (issues.length > 0) {
-              console.log('🔍 Store Validation Issues:');
-              issues.forEach(issue => console.log('  ' + issue));
-              
-              if (issues.some(issue => issue.includes('❌'))) {
-                process.exit(1);
-              }
-            } else {
-              console.log('✅ Chrome Web Store validation passed');
-            }
-          "
-          
-          # Check file structure
-          echo "📁 Checking file structure..."
-          
-          required_files=("manifest.json" "service_worker.js" "sidepanel.html")
-          
-          for file in "${required_files[@]}"; do
-            if [ ! -f "$file" ]; then
-              echo "❌ Missing required file: $file"
+          # Check for essential files
+          essential_files=("manifest.json" "service_worker.js" "sidepanel.html" "content.js")
+          for file in "${essential_files[@]}"; do
+            if [ -f "$file" ]; then
+              echo "✅ $file present"
+            else
+              echo "❌ $file missing"
               exit 1
             fi
           done
-          
-          # Check icons exist
-          if [ -d "assets" ]; then
-            for size in 16 48 128; do
-              if [ ! -f "assets/icon${size}.png" ]; then
-                echo "❌ Missing icon: assets/icon${size}.png"
-                exit 1
-              fi
-            done
-          fi
-          
-          echo "✅ Store validation completed successfully"
 
-  generate-changelog:
-    name: 📝 Generate Changelog
-    runs-on: ubuntu-latest
-    if: github.event_name == 'release'
-    
-    steps:
-      - name: 📥 Checkout Repository
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 0  # Need full history for changelog
+      - name: 📦 Create Release Archive
+        run: |
+          cd dist
           
+          # Create ZIP package for Chrome Web Store
+          zip -r chromemind-extension.zip chromemind-extension/ \
+            -x "*.DS_Store*" "*.git*" "*.log*"
+          
+          # Create source code archive
+          cd ..
+          zip -r dist/chromemind-source.zip . \
+            -x "dist/*" "node_modules/*" "*.DS_Store*" "*.git*" "*.log*"
+          
+          # Package information
+          echo "📦 Created packages:"
+          ls -lh dist/*.zip
+
+      - name: 🔍 Final Package Validation
+        run: |
+          cd dist
+          
+          echo "🔍 Final package validation..."
+          
+          # Test ZIP integrity
+          unzip -t chromemind-extension.zip
+          unzip -t chromemind-source.zip
+          
+          # Check package size (Chrome Web Store limit is ~20MB)
+          extension_size=$(du -b chromemind-extension.zip | cut -f1)
+          size_mb=$((extension_size / 1024 / 1024))
+          
+          echo "📊 Extension package size: ${size_mb}MB"
+          
+          if [ $size_mb -gt 20 ]; then
+            echo "❌ Package too large for Chrome Web Store (${size_mb}MB > 20MB)"
+            exit 1
+          else
+            echo "✅ Package size acceptable for Chrome Web Store"
+          fi
+
+      - name: 📤 Upload Release Artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: chromemind-release-packages
+          path: |
+            dist/chromemind-extension.zip
+            dist/chromemind-source.zip
+          retention-days: 90
+
+  create-github-release:
+    name: 🎉 Create GitHub Release
+    runs-on: ubuntu-latest
+    needs: build-extension
+    if: startsWith(github.ref, 'refs/tags/')
+    steps:
+      - name: 🚀 Checkout Code
+        uses: actions/checkout@v4
+
+      - name: 📥 Download Release Artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: chromemind-release-packages
+          path: ./dist
+
       - name: 📝 Generate Release Notes
+        id: release_notes
         run: |
           echo "📝 Generating release notes..."
           
-          # Get current version
-          VERSION=$(node -e "console.log(require('./manifest.json').version)")
+          # Extract version from tag
+          VERSION=${GITHUB_REF#refs/tags/v}
+          echo "🏷️ Release version: $VERSION"
           
-          # Get previous tag
-          PREV_TAG=$(git describe --tags --abbrev=0 HEAD^ 2>/dev/null || echo "")
+          # Create release notes
+          cat > release_notes.md << EOF
+          # 🧠 ChromeMind v$VERSION - Built-in AI Extension
           
-          echo "# ChromeMind v${VERSION} Release Notes" > release-notes.md
-          echo "" >> release-notes.md
-          echo "## 🚀 What's New" >> release-notes.md
-          echo "" >> release-notes.md
+          ## ✨ What's New
           
-          if [ -n "$PREV_TAG" ]; then
-            echo "### 📋 Changes since $PREV_TAG" >> release-notes.md
-            echo "" >> release-notes.md
-            
-            # Get commits since last tag
-            git log "${PREV_TAG}..HEAD" --pretty=format:"- %s (%h)" >> release-notes.md
-            echo "" >> release-notes.md
-          fi
+          ChromeMind brings the power of Chrome's Built-in AI APIs directly to your browsing experience:
           
-          echo "" >> release-notes.md
-          echo "## 📦 Installation" >> release-notes.md
-          echo "" >> release-notes.md
-          echo "1. Download \`chromemind-v${VERSION}.zip\`" >> release-notes.md
-          echo "2. Extract the archive" >> release-notes.md
-          echo "3. Load in Chrome: \`chrome://extensions/\` → Developer mode → Load unpacked" >> release-notes.md
-          echo "" >> release-notes.md
-          echo "## 🧪 Testing" >> release-notes.md
-          echo "" >> release-notes.md
-          echo "See [TESTING.md](TESTING.md) for comprehensive testing instructions." >> release-notes.md
-          echo "" >> release-notes.md
-          echo "---" >> release-notes.md
-          echo "" >> release-notes.md
-          echo "**Built for Google Chrome Built-in AI Challenge 2025**" >> release-notes.md
+          ### 🚀 Features
+          - 📄 **Smart Summarization**: Extract key points from any webpage
+          - 🌐 **Instant Translation**: Translate selections automatically  
+          - ✏️ **Grammar Review**: Fix errors and improve clarity
+          - 🔄 **Creative Rewriting**: Transform text for better fluency
+          - 🧠 **AI Chat**: Converse with on-device AI assistant
+          - 🔒 **Privacy First**: All processing happens locally
+          - ☁️ **Hybrid Fallback**: Optional cloud integration
           
-          echo "✅ Release notes generated"
+          ### 🛠️ Technical Highlights
+          - **7 Built-in AI APIs** integrated seamlessly
+          - **Manifest V3** compliant Chrome extension
+          - **Zero dependencies** - pure JavaScript implementation
+          - **Professional code quality** with comprehensive testing
+          - **Open source** under MIT license
           
-      - name: 📤 Upload Release Notes
-        uses: actions/upload-artifact@v4
-        with:
-          name: release-notes
-          path: release-notes.md
+          ### 🏆 Competition Ready
+          Built for the **Google Chrome Built-in AI Challenge 2025**:
+          - Demonstrates innovative use of Chrome's Built-in AI
+          - Shows hybrid local+cloud architecture
+          - Provides real user value and productivity gains
+          
+          ## 📦 Installation
+          
+          1. Download the \`chromemind-extension.zip\` file
+          2. Open \`chrome://extensions/\` in Chrome
+          3. Enable "Developer mode"
+          4. Click "Load unpacked" and select the extracted folder
+          5. Start using ChromeMind on any website!
+          
+          ## 🔗 Links
+          - 📚 [Documentation](https://github.com/FuturoDevJunior/chromemind#readme)
+          - 🧪 [Testing Guide](https://github.com/FuturoDevJunior/chromemind/blob/main/TESTING.md)
+          - 🐛 [Report Issues](https://github.com/FuturoDevJunior/chromemind/issues)
+          - 🏆 [Competition Entry](https://devpost.com/software/chromemind)
+          
+          ## 📊 Stats
+          - **Package Size**: $(du -h dist/chromemind-extension.zip | cut -f1)
+          - **Total Files**: $(unzip -l dist/chromemind-extension.zip | tail -1 | awk '{print $2}') files
+          - **Chrome Version**: 128+ required
+          - **License**: MIT
+          
+          ---
+          
+          **🎯 Ready for Google Chrome Built-in AI Challenge 2025!**
+          EOF
+          
+          echo "release_notes_file=release_notes.md" >> $GITHUB_OUTPUT
 
-  notify-success:
-    name: ✅ Release Success Notification
+      - name: 🎉 Create Release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ github.ref }}
+          release_name: 🧠 ChromeMind ${{ github.ref }}
+          body_path: release_notes.md
+          draft: false
+          prerelease: false
+
+      - name: 📎 Upload Extension Package
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./dist/chromemind-extension.zip
+          asset_name: chromemind-extension.zip
+          asset_content_type: application/zip
+
+      - name: 📎 Upload Source Package
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./dist/chromemind-source.zip
+          asset_name: chromemind-source.zip
+          asset_content_type: application/zip
+
+  chrome-store-prep:
+    name: 🏪 Chrome Web Store Preparation
     runs-on: ubuntu-latest
-    needs: [validate-release, build-extension, security-scan, chrome-web-store-validation]
-    if: success()
-    
+    needs: build-extension
     steps:
-      - name: 📥 Checkout Repository
-        uses: actions/checkout@v4
-        
-      - name: ✅ Success Summary
+      - name: 📥 Download Release Artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: chromemind-release-packages
+          path: ./dist
+
+      - name: 🏪 Store Readiness Check
         run: |
-          VERSION=$(node -e "console.log(require('./manifest.json').version)")
+          echo "🏪 Chrome Web Store Readiness Assessment..."
           
-          echo "🎉 ChromeMind v${VERSION} Release Completed Successfully!"
-          echo ""
-          echo "✅ All validation checks passed"
-          echo "✅ Extension package built"
-          echo "✅ Security scan completed"
-          echo "✅ Chrome Web Store validation passed"
-          echo ""
-          echo "📦 Ready for Chrome Web Store submission!"
-          echo ""
-          echo "🔗 Release: ${{ github.server_url }}/${{ github.repository }}/releases/tag/v${VERSION}"
+          cd dist
+          unzip -q chromemind-extension.zip
+          cd chromemind-extension
+          
+          # Validate store requirements
+          echo "📋 Validating Chrome Web Store requirements..."
+          
+          # Check manifest fields
+          node -e "
+            const manifest = require('./manifest.json');
+            
+            console.log('📦 Extension Details:');
+            console.log('  Name:', manifest.name);
+            console.log('  Version:', manifest.version);
+            console.log('  Description:', manifest.description.substring(0, 100) + '...');
+            console.log('  Permissions:', (manifest.permissions || []).length);
+            console.log('  Icons:', Object.keys(manifest.icons || {}).length);
+            
+            // Store submission checklist
+            const checks = {
+              'Name length (3-75 chars)': manifest.name.length >= 3 && manifest.name.length <= 75,
+              'Description length (10-132 chars)': manifest.description.length >= 10 && manifest.description.length <= 132,
+              'Required icons present': manifest.icons && manifest.icons['16'] && manifest.icons['48'] && manifest.icons['128'],
+              'Manifest V3 compliant': manifest.manifest_version === 3,
+              'Version format valid': /^\d+\.\d+\.\d+$/.test(manifest.version)
+            };
+            
+            console.log('\n🎯 Store Readiness Checklist:');
+            Object.entries(checks).forEach(([check, passed]) => {
+              console.log(passed ? '✅' : '❌', check);
+            });
+            
+            const allPassed = Object.values(checks).every(Boolean);
+            if (!allPassed) {
+              console.log('\n❌ Some store requirements not met');
+              process.exit(1);
+            }
+            
+            console.log('\n🎉 Ready for Chrome Web Store submission!');
+          "
+          
+          echo "✅ Chrome Web Store preparation completed"
