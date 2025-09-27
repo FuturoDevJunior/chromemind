@@ -1,7 +1,7 @@
-// Content script para extrair texto das páginas
+// Content script for extracting text from pages
 function getReadablePageText() {
   try {
-    // Prioriza elementos semânticos primeiro
+    // Prioritize semantic elements first
     const candidates = [
       'article',
       'main', 
@@ -14,7 +14,7 @@ function getReadablePageText() {
     
     let targetElement = document.body;
     
-    // Tenta encontrar o melhor container de conteúdo
+    // Try to find the best content container
     for (const selector of candidates) {
       const element = document.querySelector(selector);
       if (element && element.textContent.trim().length > 100) {
@@ -23,13 +23,13 @@ function getReadablePageText() {
       }
     }
     
-    // Cria walker para extrair texto limpo
+    // Create walker to extract clean text
     const walker = document.createTreeWalker(
       targetElement, 
       NodeFilter.SHOW_TEXT,
       {
         acceptNode: function(node) {
-          // Ignora scripts, styles e elementos ocultos
+          // Ignore scripts, styles and hidden elements
           const parent = node.parentElement;
           if (!parent) return NodeFilter.FILTER_REJECT;
           
@@ -50,7 +50,7 @@ function getReadablePageText() {
     
     let textBuffer = '';
     let charCount = 0;
-    const maxChars = 50000; // Limite para performance
+    const maxChars = 50000; // Production limit for performance and memory
     
     while (walker.nextNode() && charCount < maxChars) {
       const text = walker.currentNode.nodeValue.trim();
@@ -60,11 +60,12 @@ function getReadablePageText() {
       }
     }
     
-    // Limpa espaços extras e retorna
+    // Clean extra spaces and return
     return textBuffer.replace(/\s+/g, ' ').trim();
     
   } catch (error) {
-    console.error('Erro ao extrair texto da página:', error);
+    // Log for troubleshooting while maintaining user privacy
+    console.error('ChromeMind: Error extracting page text:', error.message);
     return document.body.textContent?.substring(0, 10000) || '';
   }
 }
@@ -77,11 +78,11 @@ function getSelectionText() {
     const range = selection.getRangeAt(0);
     const text = range.toString().trim();
     
-    // Limita seleção muito grande
+    // Limit very large selection
     return text.length > 10000 ? text.substring(0, 10000) + '...' : text;
     
   } catch (error) {
-    console.error('Erro ao obter seleção:', error);
+    console.error('ChromeMind: Error getting selection:', error.message);
     return '';
   }
 }
@@ -92,17 +93,17 @@ function getPageMetadata() {
     const url = window.location.href;
     const lang = document.documentElement.lang || 'unknown';
     
-    // Tenta obter descrição da página
+    // Try to get page description
     const description = document.querySelector('meta[name="description"]')?.content || '';
     
     return { title, url, lang, description };
   } catch (error) {
-    console.error('Erro ao obter metadados:', error);
+    console.error('ChromeMind: Error getting metadata:', error.message);
     return { title: '', url: '', lang: 'unknown', description: '' };
   }
 }
 
-// Listener para mensagens do side panel
+// Listener for side panel messages
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   try {
     switch (message.type) {
@@ -124,19 +125,18 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
         break;
         
       case 'PING':
-        sendResponse({ success: true, message: 'Content script ativo' });
+        sendResponse({ success: true, message: 'Content script active' });
         break;
         
       default:
-        sendResponse({ success: false, error: 'Tipo de mensagem não reconhecido' });
+        sendResponse({ success: false, error: 'Message type not recognized' });
     }
   } catch (error) {
-    console.error('Erro no content script:', error);
+    console.error('ChromeMind content script error:', error.message);
     sendResponse({ success: false, error: error.message });
   }
   
-  return true; // Mantém o canal de resposta aberto
+  return true; // Keep response channel open
 });
 
-// Sinaliza que o content script foi carregado
-console.log('ChromeMind content script carregado');
+// ChromeMind content script loaded successfully

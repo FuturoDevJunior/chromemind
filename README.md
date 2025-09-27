@@ -1,6 +1,6 @@
 # 🧠 ChromeMind — Built-in AI Booster
 
-> **Resuma, traduza, revise, reescreva e gere conteúdo — tudo on-device com Gemini Nano nas Built-in AI APIs do Chrome.**
+> **Summarize, translate, proofread, rewrite and generate content — all on-device with Gemini Nano using Chrome's Built-in AI APIs.**
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Chrome Extension](https://img.shields.io/badge/Chrome-Extension-blue.svg)](https://developer.chrome.com/docs/extensions/)
@@ -8,277 +8,282 @@
 
 ## ✨ Features
 
-- **📄 Resumo Inteligente**: Extraia pontos-chave de qualquer página web
-- **🌐 Tradução Instantânea**: Traduza seleções para português automaticamente
-- **✏️ Revisão Gramatical**: Corrija erros e melhore a clareza do texto
-- **🔄 Reescrita Criativa**: Transforme texto em versões mais claras e fluentes
-- **🧠 Chat IA**: Converse diretamente com Gemini Nano on-device
-- **🔒 Privacy First**: Dados processados localmente, sem sair do dispositivo
-- **⚡ Híbrido Opcional**: Fallback cloud para contextos pesados
+- **📄 Smart Summarization**: Extract key points from any web page
+- **🌐 Instant Translation**: Translate selections to English automatically  
+- **✏️ Grammar Review**: Fix errors and improve text clarity
+- **🔄 Creative Rewriting**: Transform text into clearer, more fluent versions
+- **🧠 AI Chat**: Converse directly with Gemini Nano on-device
+- **🔒 Privacy First**: Data processed locally, never leaves your device
+- **⚡ Hybrid Optional**: Cloud fallback for heavy contexts
 
-## 🎯 Por que ChromeMind?
+## 🎯 Why ChromeMind?
 
 ### **Client-First Architecture**
-- ✅ **Privacidade Total**: Nada sai do device (modo local)
-- ✅ **Velocidade Máxima**: Processamento instantâneo 
-- ✅ **Offline Ready**: Funciona sem internet
-- ✅ **Zero Custos**: Sem quotas ou limits de servidor
+- ✅ **Total Privacy**: Nothing leaves the device (local mode)
+- ✅ **Maximum Speed**: Instant processing
+- ✅ **Offline Ready**: Works without internet
+- ✅ **Zero Costs**: No server quotas or limits
 
-### **UX Mínima e Viral**
-- ✅ **Funciona em qualquer site**: Valor imediato
-- ✅ **Interface de um clique**: Botões rápidos
-- ✅ **Side Panel nativo**: Integração perfeita com Chrome
-- ✅ **Streaming real-time**: Veja respostas sendo geradas
+### **Minimal and Viral UX**
+- ✅ **Works on any website**: Immediate value
+- ✅ **One-click interface**: Quick action buttons
+- ✅ **Native Side Panel**: Perfect Chrome integration
+- ✅ **Real-time streaming**: Watch responses being generated
 
-### **Tecnologia de Ponta**
-- ✅ **Gemini Nano**: IA mais avançada on-device
+### **Cutting-Edge Technology**
+- ✅ **Gemini Nano**: Most advanced on-device AI
 - ✅ **Chrome Built-in APIs**: Summarizer, Translator, Proofreader, Writer, Prompt
-- ✅ **Manifest V3**: Extensão moderna e segura
-- ✅ **Fallback Inteligente**: Hybrid cloud quando necessário
+- ✅ **Manifest V3**: Modern and secure extension
+- ✅ **Smart Fallback**: Hybrid cloud when necessary
 
 ## 🚀 Quick Start
 
-### Pré-requisitos
+### Prerequisites
 
-- **Chrome 128+** com Built-in AI habilitado
-- Para **Prompt/Proofreader/Writer APIs**: Origin Trial ativo
+- **Chrome 128+** with Built-in AI enabled
+- For **Prompt/Proofreader/Writer APIs**: Active Origin Trial (optional - extension works without)
 
-### Instalação
+### Installation
 
-1. **Clone o repositório**
+1. **Clone the repository**
    ```bash
-   git clone https://github.com/seu-usuario/chromemind.git
+   git clone https://github.com/futurodevjunior/chromemind.git
    cd chromemind
    ```
 
-2. **Instale a extensão**
-   - Abra `chrome://extensions/`
-   - Ative "Modo do desenvolvedor"
-   - Clique "Carregar sem compactação"
-   - Selecione a pasta `chromemind/`
+2. **Install the extension**
+   - Open `chrome://extensions/`
+   - Enable "Developer mode"
+   - Click "Load unpacked"
+   - Select the `chromemind/` folder
 
-3. **Configure Origin Trial** (opcional)
-   - Acesse [Chrome Origin Trials](https://developer.chrome.com/origintrials/)
-   - Registre-se para "Prompt API" e "Writer APIs"
-   - Adicione o token na configuração da extensão
+3. **Configure Origin Trial** (optional)
+   - Visit [Chrome Origin Trials](https://developer.chrome.com/origintrials/)
+   - Register for "Prompt API" and "Writer APIs"
+   - Add the token in extension configuration
 
-### Uso Básico
+### Basic Usage
 
-1. **Abra qualquer página web**
-2. **Clique no ícone ChromeMind** (🧠) na barra de ferramentas
-3. **Use os botões do Side Panel**:
-   - **Resumo**: Extrai pontos-chave da página
-   - **Traduzir**: Converte seleção para português
-   - **Revisar**: Corrige gramática e estilo
-   - **Reescrever**: Melhora clareza e fluência
-   - **Prompt**: Chat livre com Gemini Nano
+1. **Open any web page**
+2. **Click the ChromeMind icon** (🧠) in the toolbar
+3. **Use the Side Panel buttons**:
+   - **Summary**: Extract key points from the page
+   - **Translate**: Convert selection to English
+   - **Proofread**: Fix grammar and style
+   - **Rewrite**: Improve clarity and fluency
+   - **Prompt**: Free chat with Gemini Nano
 
 ## 📋 API Status & Availability
 
 | API | Status | Chrome Version | Origin Trial |
 |-----|--------|----------------|--------------|
-| **Summarizer** | ✅ Estável | 128+ | ❌ |
-| **Translator** | ✅ Estável | 128+ | ❌ |
-| **Language Detector** | ✅ Estável | 128+ | ❌ |
+| **Summarizer** | ✅ Stable | 128+ | ❌ |
+| **Translator** | ✅ Stable | 128+ | ❌ |
+| **Language Detector** | ✅ Stable | 128+ | ❌ |
 | **Prompt API** | 🧪 Trial | 128+ | ✅ |
 | **Proofreader** | 🧪 Trial | 128+ | ✅ |
 | **Writer/Rewriter** | 🧪 Trial | 128+ | ✅ |
 
-## 🔧 Configuração Avançada
+## 🔧 Advanced Configuration
 
-### Modo Híbrido (Opcional)
+### Hybrid Mode (Optional)
 
-Para contextos que excedem capacidade local:
+For contexts that exceed local capacity:
 
-1. **Abra DevTools** (F12)
-2. **Execute no Console**:
+1. **Open DevTools** (F12)
+2. **Run in Console**:
    ```javascript
    // Gemini API
-   await setHybridConfig('gemini', 'SUA_API_KEY_AQUI');
+   await setHybridConfig('gemini', 'YOUR_API_KEY_HERE');
    
    // OpenAI API
-   await setHybridConfig('openai', 'SUA_API_KEY_AQUI');
+   await setHybridConfig('openai', 'YOUR_API_KEY_HERE');
    ```
-3. **Ative o toggle "Hybrid"** no painel
+3. **Enable the "Hybrid" toggle** in the panel
 
-### Obtendo API Keys
+### Getting API Keys
 
 - **Gemini**: [Google AI Studio](https://makersuite.google.com/app/apikey)
 - **OpenAI**: [OpenAI Platform](https://platform.openai.com/api-keys)
 
-## 🛠️ Tecnologias Utilizadas
+## 🛠️ Technologies Used
 
 ### Chrome Built-in AI APIs
-- **Prompt API**: Chat com Gemini Nano (extensões)
-- **Summarizer API**: Resumos inteligentes 
-- **Translator API**: Tradução automática
-- **Language Detector API**: Detecção de idiomas
-- **Proofreader API**: Revisão gramatical
-- **Writer/Rewriter APIs**: Geração e melhoria de texto
+- **Prompt API**: Chat with Gemini Nano (extensions)
+- **Summarizer API**: Smart summaries
+- **Translator API**: Automatic translation
+- **Language Detector API**: Language detection
+- **Proofreader API**: Grammar review
+- **Writer/Rewriter APIs**: Text generation and improvement
 
 ### Chrome Extensions (Manifest V3)
-- **Side Panel**: Interface nativa
+- **Side Panel**: Native interface
 - **Service Worker**: Background processing
-- **Content Scripts**: Extração de texto
+- **Content Scripts**: Text extraction
 - **Permissions**: activeTab, scripting, storage
 
 ### Frontend
 - **HTML/CSS/JS**: Vanilla, zero dependencies
 - **Modular Architecture**: ES6 modules
-- **Error Handling**: Robusto e user-friendly
+- **Error Handling**: Robust and user-friendly
 - **Streaming Support**: Real-time responses
 
-## 📁 Estrutura do Projeto
+## 📁 Project Structure
 
 ```
 chromemind/
-├── manifest.json              # Configuração da extensão
+├── manifest.json              # Extension configuration
 ├── service_worker.js          # Background service worker
-├── sidepanel.html             # Interface principal
-├── sidepanel.js               # Lógica da UI
-├── content.js                 # Extração de texto das páginas
-├── styles.css                 # Estilos da interface
-├── lib/                       # Módulos de IA
-│   ├── ai-base.js            # Utilitários comuns
+├── sidepanel.html             # Main interface
+├── sidepanel.js               # UI logic
+├── content.js                 # Page text extraction
+├── styles.css                 # Interface styles
+├── lib/                       # AI modules
+│   ├── ai-base.js            # Common utilities
 │   ├── ai-prompt.js          # Prompt API integration
 │   ├── ai-summarizer.js      # Summarizer API integration
 │   ├── ai-translate.js       # Translator + Language Detector
 │   ├── ai-proofreader.js     # Proofreader API integration
 │   └── ai-writer.js          # Writer/Rewriter APIs
-├── hybrid/                    # Sistema de fallback
+├── hybrid/                    # Fallback system
 │   ├── fallback.js           # Cloud fallback logic
-│   └── README.md             # Instruções híbridas
-├── assets/                    # Ícones e recursos
-│   ├── icon16.svg            # Ícone 16px
-│   ├── icon48.svg            # Ícone 48px
-│   ├── icon128.svg           # Ícone 128px
-│   └── README.md             # Instruções de ícones
-├── README.md                  # Este arquivo
-└── LICENSE                   # Licença MIT
+│   └── README.md             # Hybrid instructions
+├── assets/                    # Icons and resources
+│   ├── icon16.png            # 16px icon (toolbar)
+│   ├── icon48.png            # 48px icon (extensions page)
+│   ├── icon128.png           # 128px icon (Chrome Web Store)
+│   ├── icon16.svg            # 16px icon (SVG backup)
+│   ├── icon48.svg            # 48px icon (SVG backup)
+│   ├── icon128.svg           # 128px icon (SVG backup)
+│   └── README.md             # Icon instructions
+├── README.md                  # This file
+└── LICENSE                   # MIT License
 ```
 
 ## 🎮 Keyboard Shortcuts
 
-- **Ctrl/Cmd + S**: Resumir página
-- **Ctrl/Cmd + T**: Traduzir seleção
-- **Enter** (no prompt): Enviar pergunta
+- **Ctrl/Cmd + S**: Summarize page
+- **Ctrl/Cmd + T**: Translate selection
+- **Enter** (in prompt): Send question
 
 ## 🧪 Testing Instructions
 
-### Para Jurados/Avaliadores
+### For Judges/Evaluators
 
-1. **Instale via "Load unpacked"** (pasta `chromemind/`)
+1. **Install via "Load unpacked"** (`chromemind/` folder)
 
-2. **Teste APIs Estáveis** (funcionam imediatamente):
-   - ✅ Resumo de páginas (Summarizer API)
-   - ✅ Tradução de seleções (Translator API)
+2. **Test Stable APIs** (work immediately):
+   - ✅ Page summarization (Summarizer API)
+   - ✅ Selection translation (Translator API)
 
-3. **Teste APIs Origin Trial** (requer configuração):
-   - 🧪 Chat com Prompt API
-   - 🧪 Revisão com Proofreader API
-   - 🧪 Reescrita com Writer APIs
+3. **Test Origin Trial APIs** (require setup):
+   - 🧪 Chat with Prompt API
+   - 🧪 Review with Proofreader API
+   - 🧪 Rewrite with Writer APIs
 
-4. **Teste Modo Híbrido**:
-   - Configure uma API key (ver seção Configuração)
-   - Ative toggle "Hybrid"
-   - Teste fallback cloud
+4. **Test Hybrid Mode**:
+   - Configure an API key (see Configuration section)
+   - Enable "Hybrid" toggle
+   - Test cloud fallback
 
-### Fluxos de Teste Recomendados
+### Recommended Test Flows
 
-1. **Jornalista**: Abra artigo → Resumo → Traduzir trechos
-2. **Estudante**: Selecione parágrafo → Revisar → Reescrever  
-3. **Pesquisador**: Use Chat para fazer perguntas sobre o conteúdo
+1. **Journalist**: Open article → Summary → Translate excerpts
+2. **Student**: Select paragraph → Proofread → Rewrite
+3. **Researcher**: Use Chat to ask questions about content
 
 ## 🏆 Hackathon Categories
 
 ### **Most Helpful - Chrome Extension**
-- ✅ Acelera tarefas diárias de leitura e escrita
-- ✅ Interface intuitiva e não-intrusiva
-- ✅ Funciona em qualquer site
+- ✅ Accelerates daily reading and writing tasks
+- ✅ Intuitive and non-intrusive interface
+- ✅ Works on any website
 
 ### **Best Hybrid AI Application**
-- ✅ Local-first com fallback inteligente
-- ✅ Demonstra padrão escalável para futuras apps
-- ✅ Balanceamento privacidade vs. funcionalidade
+- ✅ Local-first with smart fallback
+- ✅ Demonstrates scalable pattern for future apps
+- ✅ Balances privacy vs. functionality
 
 ### **Best Multimodal AI Application**
-- ✅ Múltiplas APIs integradas harmoniosamente
+- ✅ Multiple APIs integrated harmoniously
 - ✅ Text → Summary, Translation, Correction, Rewrite, Chat
-- ✅ Diferentes modelos para diferentes tarefas
+- ✅ Different models for different tasks
 
 ## 🔍 Code Quality
 
-### Arquitetura
-- **Modular**: Cada API em módulo separado
-- **Error Handling**: Tratamento robusto de falhas
-- **Session Management**: Limpeza automática de sessões
-- **Performance**: Timeouts e otimizações
+### Architecture
+- **Modular**: Each API in separate module
+- **Error Handling**: Robust failure treatment
+- **Session Management**: Automatic session cleanup
+- **Performance**: Timeouts and optimizations
 
-### Segurança
-- **Manifest V3**: Última versão de segurança
+### Security
+- **Manifest V3**: Latest security version
 - **CSP Compliant**: Content Security Policy
-- **No Eval**: Zero código dinâmico
-- **Sanitização**: Inputs validados
+- **No Eval**: Zero dynamic code
+- **Sanitization**: Validated inputs
 
-### UX/Acessibilidade  
-- **Loading States**: Feedback visual claro
-- **Error Messages**: Mensagens úteis
-- **Keyboard Navigation**: Suporte completo
-- **Responsive**: Adapta a diferentes tamanhos
+### UX/Accessibility
+- **Loading States**: Clear visual feedback
+- **Error Messages**: Helpful messages
+- **Keyboard Navigation**: Full support
+- **Responsive**: Adapts to different sizes
 
 ## 📈 Performance Benchmarks
 
-- **Resumo**: ~2-5s para páginas de 5000 palavras
-- **Tradução**: ~1-3s para seleções de 500 palavras  
-- **Revisão**: ~1-2s para parágrafos
-- **Chat**: ~3-8s para respostas elaboradas
+- **Summary**: ~2-5s for 5000-word pages
+- **Translation**: ~1-3s for 500-word selections
+- **Proofreading**: ~1-2s for paragraphs
+- **Chat**: ~3-8s for detailed responses
 - **Memory**: <10MB RAM total
 
 ## 🤝 Contributing
 
-Contribuições são bem-vindas! Por favor:
+Contributions are welcome! Please:
 
-1. Fork o projeto
-2. Crie uma branch (`git checkout -b feature/AmazingFeature`)
-3. Commit suas mudanças (`git commit -m 'Add AmazingFeature'`)
-4. Push para a branch (`git push origin feature/AmazingFeature`)
-5. Abra um Pull Request
+1. Fork the project
+2. Create a branch (`git checkout -b feature/AmazingFeature`)
+3. Commit your changes (`git commit -m 'Add AmazingFeature'`)
+4. Push to the branch (`git push origin feature/AmazingFeature`)
+5. Open a Pull Request
 
-### Desenvolvimento Local
+### Local Development
 
 ```bash
-# Clone o repositório
+# Clone repository
 git clone https://github.com/futurodevjunior/chromemind.git
 cd chromemind
 
-# Instalar dependências (opcional)
+# Install dependencies (optional)
 npm install
 
-# Validar manifest
+# Validate manifest
 npm run validate
 
-# Testar sintaxe
+# Test syntax
 npm test
 ```
 
 ## 📝 License
 
-Este projeto está licenciado sob a Licença MIT - veja o arquivo [LICENSE](LICENSE) para detalhes.
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
 ## 🙋‍♂️ Support
 
-- **GitHub Issues**: [Reportar bugs ou sugestões](https://github.com/futurodevjunior/chromemind/issues)
+- **GitHub Issues**: [Report bugs or suggestions](https://github.com/futurodevjunior/chromemind/issues)
 - **Documentation**: [Chrome Built-in AI Docs](https://developer.chrome.com/docs/ai/built-in-apis)
 - **Origin Trials**: [Chrome Origin Trials](https://developer.chrome.com/origintrials/)
 
 ## 🌟 Acknowledgments
 
-- **Chrome Team**: Pelas fantásticas Built-in AI APIs
-- **Tabler Icons**: Ícones open source de qualidade
-- **Open Source Community**: Feedback e contribuições
+- **Chrome Team**: For the fantastic Built-in AI APIs
+- **Tabler Icons**: Quality open source icons
+- **Open Source Community**: Feedback and contributions
 
 ---
 
 **🚀 Built for Google Chrome Built-in AI Challenge 2025**
+
+**Version**: 1.0.0 (Production Ready) | **Chrome**: 128+ | **APIs**: Built-in AI | **License**: MIT
 
 *"Bringing AI to every web page, privately and instantly."*

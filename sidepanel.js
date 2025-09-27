@@ -1,4 +1,4 @@
-// ChromeMind Side Panel - Integração completa com Built-in AI APIs
+// ChromeMind Side Panel - Complete Built-in AI APIs Integration
 import { summarizePageText, checkSummarizerAvailability } from './lib/ai-summarizer.js';
 import { translateSelection, checkTranslatorAvailability } from './lib/ai-translate.js';
 import { proofreadSimple, checkProofreaderAvailability } from './lib/ai-proofreader.js';
@@ -13,17 +13,17 @@ import {
   getHybridConfig 
 } from './hybrid/fallback.js';
 
-// Elementos da interface
+// Interface elements
 const $ = (selector) => document.querySelector(selector);
 const output = $('#output');
 const hybridToggle = $('#hybridToggle');
 const streamToggle = $('#streamToggle');
 
-// Estado da aplicação
+// Application state
 let isProcessing = false;
 
-// Funções de UI
-function showLoading(message = 'Processando...') {
+// UI Functions
+function showLoading(message = 'Processing...') {
   output.textContent = `⏳ ${message}`;
   output.className = 'output loading';
   setButtonsState(false);
@@ -47,7 +47,7 @@ function setButtonsState(enabled) {
   });
 }
 
-// Função para obter texto da página
+// Function to get page text
 async function getPageText() {
   try {
     const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
@@ -59,13 +59,13 @@ async function getPageText() {
         metadata: response.metadata || {}
       };
     }
-    throw new Error('Falha ao obter texto da página');
+    throw new Error('Failed to get page text');
   } catch (error) {
-    throw new Error(`Erro ao acessar a página: ${error.message}`);
+    throw new Error(`Error accessing page: ${error.message}`);
   }
 }
 
-// Função para obter seleção
+// Function to get selection
 async function getSelection() {
   try {
     const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
@@ -74,9 +74,9 @@ async function getSelection() {
     if (response?.success) {
       return response.text;
     }
-    throw new Error('Falha ao obter seleção');
+    throw new Error('Failed to get selection');
   } catch (error) {
-    throw new Error(`Erro ao acessar seleção: ${error.message}`);
+    throw new Error(`Error accessing selection: ${error.message}`);
   }
 }
 
@@ -88,35 +88,35 @@ async function tryLocalThenHybrid(localFn, hybridFn, fallbackMessage) {
     // Sempre tenta local primeiro
     return await localFn();
   } catch (localError) {
-    console.warn('Erro na API local:', localError);
+    console.warn('Local API error:', localError);
     
     if (useHybrid) {
       try {
-        showLoading('Usando fallback cloud...');
+        showLoading('Using cloud fallback...');
         return await hybridFn();
       } catch (hybridError) {
         throw new Error(`Local: ${localError.message}\nHybrid: ${hybridError.message}`);
       }
     } else {
-      throw new Error(`${localError.message}\n\n💡 Dica: Ative "Hybrid" para usar fallback cloud.`);
+      throw new Error(`${localError.message}\n\n💡 Tip: Enable "Hybrid" toggle to use cloud fallback when local AI APIs are unavailable.`);
     }
   }
 }
 
-// Handlers dos botões
+// Button handlers
 
 $('#btnSummarize').addEventListener('click', async () => {
   if (isProcessing) return;
   
-  showLoading('Obtendo texto da página...');
+  showLoading('Getting page text...');
   
   try {
     const { text, metadata } = await getPageText();
     if (!text || text.length < 50) {
-      throw new Error('Página não contém texto suficiente para resumir');
+      throw new Error('Page does not contain enough text to summarize');
     }
 
-    showLoading('Gerando resumo...');
+    showLoading('Generating summary...');
     
     const result = await tryLocalThenHybrid(
       () => summarizePageText(text, {
@@ -127,110 +127,110 @@ $('#btnSummarize').addEventListener('click', async () => {
         onStreamChunk: streamToggle.checked ? showStreaming : null
       }),
       () => hybridSummarize(text),
-      'Summarizer API não disponível'
+      'Summarizer API not available'
     );
 
-    const finalResult = `📄 **Resumo da página**\n${metadata.title ? `**Título:** ${metadata.title}\n` : ''}\n${result}`;
+    const finalResult = `📄 **Page Summary**\n${metadata.title ? `**Title:** ${metadata.title}\n` : ''}\n${result}`;
     showResult(finalResult);
 
   } catch (error) {
-    showResult(`❌ Erro no resumo:\n${error.message}`, true);
+    showResult(`❌ Summary error:\n${error.message}`, true);
   }
 });
 
 $('#btnTranslate').addEventListener('click', async () => {
   if (isProcessing) return;
   
-  showLoading('Obtendo texto...');
+  showLoading('Getting text...');
   
   try {
     let text = await getSelection();
     if (!text) {
       const pageData = await getPageText();
-      text = pageData.text.substring(0, 2000); // Limita para tradução
+      text = pageData.text.substring(0, 2000); // Limit for translation
       if (!text) {
-        throw new Error('Nenhum texto selecionado ou encontrado na página');
+        throw new Error('No text selected or found on page');
       }
     }
 
-    showLoading('Traduzindo para português...');
+    showLoading('Translating to English...');
     
     const result = await tryLocalThenHybrid(
       async () => {
-        const translation = await translateSelection(text, 'pt');
+        const translation = await translateSelection(text, 'en');
         if (!translation.isTranslated) {
-          return `✅ **Texto já está em português**\n\n${translation.translatedText}`;
+          return `✅ **Text is already in English**\n\n${translation.translatedText}`;
         }
-        return `🌐 **Tradução ${translation.sourceLanguage} → ${translation.targetLanguage}**\n\n${translation.translatedText}`;
+        return `🌐 **Translation ${translation.sourceLanguage} → ${translation.targetLanguage}**\n\n${translation.translatedText}`;
       },
-      () => hybridTranslate(text, 'pt'),
-      'Translator API não disponível'
+      () => hybridTranslate(text, 'en'),
+      'Translator API not available'
     );
 
     showResult(result);
 
   } catch (error) {
-    showResult(`❌ Erro na tradução:\n${error.message}`, true);
+    showResult(`❌ Translation error:\n${error.message}`, true);
   }
 });
 
 $('#btnProofread').addEventListener('click', async () => {
   if (isProcessing) return;
   
-  showLoading('Obtendo seleção...');
+  showLoading('Getting selection...');
   
   try {
     const text = await getSelection();
     if (!text) {
-      throw new Error('Selecione um texto primeiro para revisar');
+      throw new Error('Please select text first to proofread');
     }
 
     if (text.length > 5000) {
-      throw new Error('Texto muito longo. Selecione até 5000 caracteres.');
+      throw new Error('Text too long. Please select up to 5000 characters.');
     }
 
-    showLoading('Revisando texto...');
+    showLoading('Proofreading text...');
     
     const result = await tryLocalThenHybrid(
       () => proofreadSimple(text),
       () => hybridProofread(text),
-      'Proofreader API não disponível'
+      'Proofreader API not available'
     );
 
-    showResult(`✏️ **Revisão Gramatical**\n\n${result}`);
+    showResult(`✏️ **Grammar Review**\n\n${result}`);
 
   } catch (error) {
-    showResult(`❌ Erro na revisão:\n${error.message}`, true);
+    showResult(`❌ Proofreading error:\n${error.message}`, true);
   }
 });
 
 $('#btnRewrite').addEventListener('click', async () => {
   if (isProcessing) return;
   
-  showLoading('Obtendo seleção...');
+  showLoading('Getting selection...');
   
   try {
     const text = await getSelection();
     if (!text) {
-      throw new Error('Selecione um texto primeiro para reescrever');
+      throw new Error('Please select text first to rewrite');
     }
 
     if (text.length > 3000) {
-      throw new Error('Texto muito longo. Selecione até 3000 caracteres.');
+      throw new Error('Text too long. Please select up to 3000 characters.');
     }
 
-    showLoading('Reescrevendo texto...');
+    showLoading('Rewriting text...');
     
     const result = await tryLocalThenHybrid(
       () => rewrite(text, { tone: "clear", length: "medium" }),
       () => hybridRewrite(text),
-      'Rewriter API não disponível'
+      'Rewriter API not available'
     );
 
-    showResult(`🔄 **Texto Reescrito**\n\n${result}`);
+    showResult(`🔄 **Rewritten Text**\n\n${result}`);
 
   } catch (error) {
-    showResult(`❌ Erro na reescrita:\n${error.message}`, true);
+    showResult(`❌ Rewriting error:\n${error.message}`, true);
   }
 });
 
@@ -239,11 +239,11 @@ $('#btnPrompt').addEventListener('click', async () => {
   
   const question = $('#promptInput').value.trim();
   if (!question) {
-    showResult('❌ Digite uma pergunta primeiro', true);
+    showResult('❌ Please enter a question first', true);
     return;
   }
 
-  showLoading('Pensando...');
+  showLoading('Thinking...');
   
   try {
     const mode = $('#promptMode').value;
@@ -257,18 +257,18 @@ $('#btnPrompt').addEventListener('click', async () => {
         onStreamChunk: streamToggle.checked ? showStreaming : null
       }),
       () => hybridPrompt(question, { mode }),
-      'Prompt API não disponível'
+      'Prompt API not available'
     );
 
     showResult(`🧠 **Response**\n\n${result}`);
     $('#promptInput').value = '';
 
   } catch (error) {
-    showResult(`❌ Erro no prompt:\n${error.message}`, true);
+    showResult(`❌ Prompt error:\n${error.message}`, true);
   }
 });
 
-// Inicialização e verificação de APIs
+// API initialization and checking
 async function initializeApp() {
   try {
     // Verifica disponibilidade das APIs
@@ -280,13 +280,17 @@ async function initializeApp() {
       checkPromptAvailability()
     ]);
 
-    console.log('Status das APIs:', {
-      summarizer: summarizer.available,
-      translator: translator.fullFeature,
-      proofreader: proofreader.available,
-      writer: writer.fullFeature,
-      prompt: prompt.available
-    });
+    // Log API status for development only
+    if (typeof window !== 'undefined' && 
+        (window.location.hostname === 'localhost' || sessionStorage.getItem('debug'))) {
+      console.log('ChromeMind API Status:', {
+        summarizer: summarizer.available,
+        translator: translator.fullFeature,
+        proofreader: proofreader.available,
+        writer: writer.fullFeature,
+        prompt: prompt.available
+      });
+    }
 
     // Configura estado inicial dos toggles
     const hybridConfig = getHybridConfig();
@@ -294,33 +298,39 @@ async function initializeApp() {
 
     // Mostra status inicial
     const readyAPIs = [];
-    if (summarizer.available) readyAPIs.push('Resumo');
-    if (translator.fullFeature) readyAPIs.push('Tradução');
-    if (proofreader.available) readyAPIs.push('Revisão');
-    if (writer.fullFeature) readyAPIs.push('Reescrita');
+    if (summarizer.available) readyAPIs.push('Summary');
+    if (translator.fullFeature) readyAPIs.push('Translation');
+    if (proofreader.available) readyAPIs.push('Proofreading');
+    if (writer.fullFeature) readyAPIs.push('Rewriting');
     if (prompt.available) readyAPIs.push('Prompt');
 
     const statusMessage = readyAPIs.length > 0 
-      ? `✅ **Pronto!** APIs disponíveis: ${readyAPIs.join(', ')}`
-      : `⚠️ **APIs não disponíveis localmente**\n\nAtivar "Hybrid" para usar fallback cloud`;
+      ? `✅ **Ready!** Available APIs: ${readyAPIs.join(', ')}`
+      : `⚠️ **APIs not available locally**\n\nEnable "Hybrid" to use cloud fallback`;
 
     showResult(statusMessage);
 
   } catch (error) {
-    console.error('Erro na inicialização:', error);
-    showResult(`❌ Erro ao inicializar: ${error.message}`, true);
+    console.error('Initialization error:', error);
+    showResult(`❌ Initialization error: ${error.message}`, true);
   }
 }
 
 // Event listeners para toggles
 hybridToggle.addEventListener('change', () => {
-  const status = hybridToggle.checked ? 'ativado' : 'desativado';
-  console.log(`Modo híbrido ${status}`);
+  const status = hybridToggle.checked ? 'enabled' : 'disabled';
+  // Development debug only
+  if (sessionStorage.getItem('debug')) {
+    console.log(`ChromeMind: Hybrid mode ${status}`);
+  }
 });
 
 streamToggle.addEventListener('change', () => {
-  const status = streamToggle.checked ? 'ativado' : 'desativado';
-  console.log(`Streaming ${status}`);
+  const status = streamToggle.checked ? 'enabled' : 'disabled';
+  // Development debug only
+  if (sessionStorage.getItem('debug')) {
+    console.log(`ChromeMind: Streaming ${status}`);
+  }
 });
 
 // Keyboard shortcuts
@@ -345,19 +355,34 @@ document.addEventListener('keydown', (e) => {
   }
 });
 
-// Inicializar quando o DOM estiver pronto
+// Initialize when DOM is ready
 if (document.readyState === 'loading') {
   document.addEventListener('DOMContentLoaded', initializeApp);
 } else {
   initializeApp();
 }
 
-// Expor funções para debug no console
+// Cleanup function for when panel is closed
+function cleanup() {
+  // Cleanup is handled automatically by Chrome when panel closes
+  if (window.ChromeMindDebug?.sessionManager) {
+    window.ChromeMindDebug.sessionManager.destroyAllSessions();
+  }
+}
+
+// Listen for beforeunload to cleanup
+window.addEventListener('beforeunload', cleanup);
+
+// Expose functions for console debugging and production troubleshooting
 window.ChromeMindDebug = {
   checkSummarizerAvailability,
   checkTranslatorAvailability,
   checkProofreaderAvailability,
   checkWriterAvailability,
   checkPromptAvailability,
-  getHybridConfig
+  getHybridConfig,
+  cleanup,
+  enableDebug: () => sessionStorage.setItem('debug', 'true'),
+  disableDebug: () => sessionStorage.removeItem('debug'),
+  version: '1.0.0'
 };

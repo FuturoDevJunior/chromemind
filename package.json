@@ -41,13 +41,14 @@
   "engines": {
     "node": ">=16.0.0"
   },
-  "devDependencies": {},
-  "dependencies": {},
+  "dependencies": {
+    "sharp": "^0.34.4"
+  },
   "files": [
     "manifest.json",
     "service_worker.js",
     "sidepanel.html",
-    "sidepanel.js", 
+    "sidepanel.js",
     "content.js",
     "styles.css",
     "lib/",
@@ -67,7 +68,7 @@
     ],
     "builtInAI": [
       "Summarizer API",
-      "Translator API", 
+      "Translator API",
       "Language Detector API",
       "Prompt API (Extensions)",
       "Proofreader API",
@@ -76,7 +77,7 @@
     ],
     "permissions": [
       "activeTab",
-      "scripting", 
+      "scripting",
       "storage",
       "sidePanel"
     ],

@@ -23,9 +23,12 @@
 - [x] `hybrid/README.md` - Configuration instructions
 
 ### **Assets & Design** ✅
-- [x] `assets/icon16.svg` - 16px extension icon
-- [x] `assets/icon48.svg` - 48px extension icon  
-- [x] `assets/icon128.svg` - 128px extension icon
+- [x] `assets/icon16.png` - 16px extension icon (Chrome compatible)
+- [x] `assets/icon48.png` - 48px extension icon (Chrome compatible)
+- [x] `assets/icon128.png` - 128px extension icon (Chrome compatible)
+- [x] `assets/icon16.svg` - 16px extension icon (SVG backup)
+- [x] `assets/icon48.svg` - 48px extension icon (SVG backup)
+- [x] `assets/icon128.svg` - 128px extension icon (SVG backup)
 - [x] `assets/README.md` - Asset generation guide
 
 ### **Documentation** ✅

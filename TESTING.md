@@ -31,26 +31,26 @@
 
 ### 3. Page Text Extraction
 - [ ] Navigate to any article/blog post
-- [ ] Click "📄 Resumo da página"
+- [ ] Click "📄 Summarize page"
 - [ ] Verify text extraction works
 - [ ] Should show loading state
 
 ### 4. Selection Tests
 - [ ] Select text on any webpage
-- [ ] Click "🌐 Traduzir seleção → PT-BR"
+- [ ] Click "🌐 Translate selection → EN"
 - [ ] Verify selection detection works
-- [ ] Try "✏️ Revisar seleção"
-- [ ] Try "🔄 Reescrever (mais claro)"
+- [ ] Try "✏️ Proofread selection"
+- [ ] Try "🔄 Rewrite (clearer)"
 
 ### 5. Chat Feature
 - [ ] Type question in text area
 - [ ] Select mode (Creative/Precise)
-- [ ] Click "▶️ Enviar"
+- [ ] Click "▶️ Send"
 - [ ] Verify response handling
 
 ## 🧪 API Availability Tests
 
-### Stable APIs (Should Work)
+### Stable APIs (Should Work Immediately)
 - [ ] **Summarizer**: Page summarization
 - [ ] **Translator**: Text translation
 - [ ] **Language Detector**: Auto language detection
@@ -64,7 +64,7 @@
 
 ### Common Issues
 
-**1. "API não disponível" errors**
+**1. "API not available" errors**
 - ✅ **Fix**: Enable Chrome flags for Built-in AI
 - ✅ **Location**: `chrome://flags/#optimization-guide-on-device-model`
 - ✅ **Set to**: Enabled
@@ -117,21 +117,21 @@ Expected performance on modern hardware:
 
 ### Scenario 1: News Reader
 1. Open a news article
-2. Use "Resumo da página" to get key points
+2. Use "Summarize page" to get key points
 3. Select foreign quotes and translate
 4. Verify summaries are accurate and concise
 
 ### Scenario 2: Student/Writer
 1. Open a research paper or blog
 2. Select a complex paragraph
-3. Use "Revisar seleção" for grammar
-4. Use "Reescrever" for clarity
+3. Use "Proofread selection" for grammar
+4. Use "Rewrite" for clarity
 5. Ask questions via chat about the content
 
 ### Scenario 3: International User
-1. Visit non-Portuguese website
+1. Visit non-English website
 2. Select various text blocks
-3. Translate to Portuguese
+3. Translate to English
 4. Verify language detection accuracy
 5. Test with different source languages
 
@@ -167,3 +167,30 @@ If you encounter problems:
 ---
 
 **🎯 Ready for Google Chrome Built-in AI Challenge 2025!**
+
+## 🏆 For Competition Judges
+
+### Quick Evaluation Steps
+
+1. **Install**: Load unpacked extension in 30 seconds
+2. **Test Core Features**: 
+   - Summarize any webpage (works immediately)
+   - Translate selected text (works immediately)
+3. **Evaluate UX**: Clean, intuitive interface
+4. **Check Innovation**: Hybrid local + cloud approach
+5. **Verify Technical Quality**: Clean code, no errors
+
+### Expected Results
+- **Summarizer**: Instant, accurate page summaries (2-5 seconds)
+- **Translator**: Fast, high-quality translations (1-3 seconds)
+- **UI/UX**: Professional, responsive interface with loading states
+- **Performance**: Sub-5-second responses for most operations
+- **Reliability**: No crashes, graceful error handling with helpful messages
+
+### Bonus Features (Origin Trial Setup)
+- **AI Chat**: Natural conversation with Gemini Nano
+- **Proofreader**: Grammar and style improvements
+- **Rewriter**: Content clarity enhancement
+- **Hybrid Mode**: Cloud fallback demonstration
+
+*This extension showcases the full potential of Chrome's Built-in AI APIs with production-ready code quality and user experience.*

@@ -1,47 +1,47 @@
 # ChromeMind Assets
 
-## Ícones da Extensão
+## Extension Icons
 
-Os ícones precisam estar nos seguintes tamanhos:
-- `icon16.png` - 16x16px (barra de ferramentas)
-- `icon48.png` - 48x48px (página de extensões)
+Icons need to be in the following sizes:
+- `icon16.png` - 16x16px (toolbar)
+- `icon48.png` - 48x48px (extensions page)
 - `icon128.png` - 128x128px (Chrome Web Store)
 
-### Gerando Ícones
+### Generating Icons
 
-Use o arquivo `icon.svg` como base e converta para PNG:
+Use the `icon.svg` file as base and convert to PNG:
 
-**Método 1: Online (Rápido)**
-1. Abra https://convertio.co/svg-png/
-2. Upload do `icon.svg`
-3. Baixe e redimensione para 16px, 48px, 128px
+**Method 1: Online (Quick)**
+1. Open https://convertio.co/svg-png/
+2. Upload `icon.svg`
+3. Download and resize to 16px, 48px, 128px
 
-**Método 2: ImageMagick (Local)**
+**Method 2: ImageMagick (Local)**
 ```bash
 convert icon.svg -resize 16x16 icon16.png
 convert icon.svg -resize 48x48 icon48.png  
 convert icon.svg -resize 128x128 icon128.png
 ```
 
-**Método 3: Figma/Design Tool**
-1. Importe o SVG
-2. Exporte em PNG nos tamanhos necessários
+**Method 3: Figma/Design Tool**
+1. Import the SVG
+2. Export as PNG in required sizes
 
 ### Design
 
-- **Cor principal**: #1a73e8 (Google Blue)
-- **Ícone**: 🧠 (representando IA)
-- **Estilo**: Moderno, arredondado, clean
-- **Fundo**: Gradiente azul
+- **Primary color**: #1a73e8 (Google Blue)
+- **Icon**: 🧠 (representing AI)
+- **Style**: Modern, rounded, clean
+- **Background**: Blue gradient
 
 ### Temporary Workaround
 
-Para desenvolvimento, você pode usar ícones de placeholder online:
-1. Baixe ícones de https://via.placeholder.com/
-2. Renomeie para os tamanhos corretos
-3. Substitua quando tiver os ícones finais
+For development, you can use placeholder icons online:
+1. Download icons from https://via.placeholder.com/
+2. Rename to correct sizes
+3. Replace when you have final icons
 
-Exemplo:
+Example:
 ```bash
 curl -o icon16.png "https://via.placeholder.com/16x16/1a73e8/ffffff?text=AI"
 curl -o icon48.png "https://via.placeholder.com/48x48/1a73e8/ffffff?text=AI"  
