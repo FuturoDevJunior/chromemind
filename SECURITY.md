@@ -262,12 +262,12 @@ If you're a judge or evaluator and discover security issues, please report them 
 **Reporting Methods:**
 
 1. **GitHub Security Advisory** (Preferred)
-   - Go to the [Security tab](https://github.com/futurodevjunior/chromemind/security)
+   - Go to the [Security tab](https://github.com/glferreira-devsecops/chromemind/security)
    - Click "Report a vulnerability"
    - Use our security advisory template
 
 2. **Email Report**
-   - **Email:** futurodevjunior@gmail.com
+   - **Email:** glferreira-devsecops@gmail.com
    - **Subject:** [SECURITY] ChromeMind Vulnerability Report
    - **Encryption:** PGP key available on request
 
@@ -468,7 +468,7 @@ npm run permission-audit   # Permission usage review
 ## 📞 Security Contact
 
 **Security Team:**
-- **Primary Contact:** DevFerreiraG (futurodevjunior@gmail.com)
+- **Primary Contact:** DevFerreiraG (glferreira-devsecops@gmail.com)
 - **Response Time:** 24 hours maximum
 - **Emergency Contact:** For critical competition-affecting issues, use GitHub Security Advisory
 

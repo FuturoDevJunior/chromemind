@@ -71,7 +71,7 @@
 
 ### **Missing (To Complete)** ⚠️
 - [ ] **Demo Video**: 3-minute YouTube video (to be created)
-- [ ] **Public GitHub**: Push to https://github.com/futurodevjunior/chromemind
+- [ ] **Public GitHub**: Push to https://github.com/glferreira-devsecops/chromemind
 
 ## 🏆 Competition Positioning
 
@@ -112,7 +112,7 @@
 
 3. **Connect & Push**
    ```bash
-   git remote add origin https://github.com/futurodevjunior/chromemind.git
+   git remote add origin https://github.com/glferreira-devsecops/chromemind.git
    git branch -M main
    git push -u origin main
    ```

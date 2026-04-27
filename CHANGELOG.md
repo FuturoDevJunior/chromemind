@@ -207,8 +207,8 @@ This changelog uses the following categories to organize changes:
 ## 🔗 Links and References
 
 ### Version Links
-- [Latest Release](https://github.com/futurodevjunior/chromemind/releases/latest)
-- [All Releases](https://github.com/futurodevjunior/chromemind/releases)
+- [Latest Release](https://github.com/glferreira-devsecops/chromemind/releases/latest)
+- [All Releases](https://github.com/glferreira-devsecops/chromemind/releases)
 - [Competition Submission](https://devpost.com/software/chromemind)
 
 ### Technical Documentation

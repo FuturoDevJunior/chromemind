@@ -21,7 +21,7 @@
     "competition:validate": "npm run build && npm run security-audit && npm run size-check && npm run competition:readiness-check && echo '🏆 Competition validation completed'",
     "competition:package": "npm run competition:validate && npm run package && echo '🏆 Competition package ready'",
     "competition:readiness-check": "node -e \"console.log('🏆 ChromeMind Competition Readiness Assessment'); console.log(''); const checklist = [['✅ Manifest V3', true], ['✅ Built-in AI APIs', true], ['✅ Security Standards', true], ['✅ Performance Optimized', true], ['✅ Documentation Complete', true], ['✅ Testing Coverage', true], ['✅ Accessibility Compliant', true], ['✅ Competition Ready', true]]; checklist.forEach(([item, status]) => console.log(item)); console.log(''); console.log('📊 Readiness Score: 100/100'); console.log('🎯 Categories: Most Helpful, Best Hybrid AI, Best Multimodal'); console.log('🚀 Status: READY FOR SUBMISSION'); console.log('🏆 Confidence Level: EXCELLENT');\"",
-    "docs:serve": "echo '📚 Documentation available at: https://github.com/futurodevjunior/chromemind#readme'",
+    "docs:serve": "echo '📚 Documentation available at: https://github.com/glferreira-devsecops/chromemind#readme'",
     "ci": "npm run build && npm run security-audit"
   },
   "keywords": [
@@ -40,18 +40,18 @@
   ],
   "author": {
     "name": "DevFerreiraG",
-    "email": "futurodevjunior@gmail.com",
-    "url": "https://github.com/futurodevjunior"
+    "email": "glferreira-devsecops@gmail.com",
+    "url": "https://github.com/glferreira-devsecops"
   },
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/futurodevjunior/chromemind.git"
+    "url": "https://github.com/glferreira-devsecops/chromemind.git"
   },
   "bugs": {
-    "url": "https://github.com/futurodevjunior/chromemind/issues"
+    "url": "https://github.com/glferreira-devsecops/chromemind/issues"
   },
-  "homepage": "https://github.com/futurodevjunior/chromemind#readme",
+  "homepage": "https://github.com/glferreira-devsecops/chromemind#readme",
   "engines": {
     "node": ">=16.0.0"
   },
@@ -110,7 +110,7 @@
     "submissions": {
       "devpost": "https://devpost.com/software/chromemind",
       "demo": "https://www.youtube.com/watch?v=YOUR_VIDEO_ID",
-      "github": "https://github.com/futurodevjunior/chromemind"
+      "github": "https://github.com/glferreira-devsecops/chromemind"
     }
   }
 }

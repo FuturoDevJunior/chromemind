@@ -29,7 +29,7 @@ repository:
     - local-ai
 
   # Repository Settings
-  homepage: "https://github.com/futurodevjunior/chromemind#readme"
+  homepage: "https://github.com/glferreira-devsecops/chromemind#readme"
   
   # Repository Features
   has_issues: true
@@ -72,7 +72,7 @@ branches:
         require_code_owner_reviews: false
         require_last_push_approval: false
         bypass_pull_request_allowances:
-          users: ["futurodevjunior"]
+          users: ["glferreira-devsecops"]
           teams: []
           apps: []
       
@@ -81,7 +81,7 @@ branches:
       allow_force_pushes: false
       allow_deletions: false
       restrict_pushes:
-        users: ["futurodevjunior"]
+        users: ["glferreira-devsecops"]
         teams: []
         apps: []
 
@@ -288,12 +288,12 @@ environments:
     description: "Demo environment for competition judges"
     protection_rules:
       - type: "required_reviewers"
-        users: ["futurodevjunior"]
+        users: ["glferreira-devsecops"]
   
   - name: "production"
     description: "Production release environment"
     protection_rules:
       - type: "required_reviewers"
-        users: ["futurodevjunior"]
+        users: ["glferreira-devsecops"]
       - type: "branch_policy"
         branch_pattern: "main"

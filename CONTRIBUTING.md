@@ -491,8 +491,8 @@ We are committed to providing a welcoming and inclusive environment:
 ## 📞 Contact
 
 **Project Maintainer:** DevFerreiraG
-- **GitHub:** [@futurodevjunior](https://github.com/futurodevjunior)
-- **Email:** futurodevjunior@gmail.com
+- **GitHub:** [@glferreira-devsecops](https://github.com/glferreira-devsecops)
+- **Email:** glferreira-devsecops@gmail.com
 
 **Competition Resources:**
 - **Challenge Page:** [Chrome Built-in AI Challenge](https://developer.chrome.com/docs/ai/built-in-apis#challenge)

@@ -53,7 +53,7 @@ Summarizer API, Translator API, Language Detector API, Prompt API (Extensions), 
 
 ### **URL to GitHub Repository**
 ```
-https://github.com/futurodevjunior/chromemind
+https://github.com/glferreira-devsecops/chromemind
 ```
 
 ### **Testing Instructions**
@@ -63,7 +63,7 @@ https://github.com/futurodevjunior/chromemind
 - Developer mode in chrome://extensions/
 
 **Installation:**
-1. Download/clone: https://github.com/futurodevjunior/chromemind
+1. Download/clone: https://github.com/glferreira-devsecops/chromemind
 2. Open chrome://extensions/ → Enable "Developer mode"
 3. Click "Load unpacked" → Select chromemind/ folder
 4. Verify extension loads without errors
@@ -125,7 +125,7 @@ Chrome Built-in AI APIs, Manifest V3, JavaScript ES6, HTML5, CSS3, Gemini Nano, 
 
 ### **Try it out**
 ```
-GitHub: https://github.com/futurodevjunior/chromemind
+GitHub: https://github.com/glferreira-devsecops/chromemind
 Demo Video: [TO BE ADDED]
 ```
 

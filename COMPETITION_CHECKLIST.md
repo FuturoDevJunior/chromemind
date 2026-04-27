@@ -125,7 +125,7 @@ ChromeMind is competing in **three categories** of the Google Chrome Built-in AI
 ## 🔗 Submission Materials
 
 ### GitHub Repository
-- [x] **Public Repository** - https://github.com/futurodevjunior/chromemind
+- [x] **Public Repository** - https://github.com/glferreira-devsecops/chromemind
 - [x] **Complete Codebase** - All source code and documentation
 - [x] **Installation Instructions** - Clear setup and testing guide
 - [x] **Demo Instructions** - Step-by-step demonstration guide

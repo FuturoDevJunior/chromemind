@@ -47,7 +47,7 @@
 
 1. **Clone the repository**
    ```bash
-   git clone https://github.com/futurodevjunior/chromemind.git
+   git clone https://github.com/glferreira-devsecops/chromemind.git
    cd chromemind
    ```
 
@@ -251,7 +251,7 @@ Contributions are welcome! Please:
 
 ```bash
 # Clone repository
-git clone https://github.com/futurodevjunior/chromemind.git
+git clone https://github.com/glferreira-devsecops/chromemind.git
 cd chromemind
 
 # Install dependencies (optional)
@@ -270,7 +270,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## 🙋‍♂️ Support
 
-- **GitHub Issues**: [Report bugs or suggestions](https://github.com/futurodevjunior/chromemind/issues)
+- **GitHub Issues**: [Report bugs or suggestions](https://github.com/glferreira-devsecops/chromemind/issues)
 - **Documentation**: [Chrome Built-in AI Docs](https://developer.chrome.com/docs/ai/built-in-apis)
 - **Origin Trials**: [Chrome Origin Trials](https://developer.chrome.com/origintrials/)
 
